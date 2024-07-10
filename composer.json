@@ -1,5 +1,5 @@
 {
-    "name": "convertcart/analytics",
+    "name": "convert-cart/analytics",
     "description": "Magento 2 plugin to integrate convertcart",
     "type": "magento2-module",
     "version": "1.0.6",
