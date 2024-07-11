@@ -49,7 +49,7 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
 
 ### Manual Installation
 
-1. Download the latest version of the plugin from the [releases](https://github.com/convert-cart/magento2-plugin/tags) page.
+1. Download the latest version of the plugin from the [releases](https://github.com/convert-cart/magento2-plugin/releases) page.
 2. Extract the downloaded archive.
 3. Upload the contents to the `app/code/convert-cart/analytics` directory of your Magento installation.
 4. Run the following commands from the Magento root directory:
