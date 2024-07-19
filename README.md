@@ -30,15 +30,23 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
 
 ### Composer Installation
 
-1. Run the following command in the root folder of your Magento installation:
+1. Run the following command in the root folder of your Magento installation when the domain is added in app.convertcart.com (for production):
 
-    ```bash
+    ```sh
     composer require convert-cart/analytics
     ```
 
+    If you're intending to setting up a domain in app-beta.convertcart.com (for beta testing), please use tag name followed by the suffix `-beta` like `1.0.6-beta`. The command will be like,
+
+    ```sh
+    composer require convert-cart/analytics:1.0.6-beta
+    ```
+
+    If you wanted to know the exact changes that's needed to setup a beta server on a production tag, you can take a look into this [commit](https://github.com/convert-cart/magento2-plugin/commit/7fcd6766d00aa0c1f9c24365864a5738bc893252).
+
 2. After installing via Composer, run the following commands from the Magento root directory:
 
-    ```bash
+    ```sh
     php bin/magento maintenance:enable
     php bin/magento setup:upgrade
     php bin/magento setup:di:compile
@@ -54,7 +62,7 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
 3. Upload the contents to the `app/code/convert-cart/analytics` directory of your Magento installation.
 4. Run the following commands from the Magento root directory:
 
-    ```bash
+    ```sh
     bin/magento module:enable Convertcart_Analytics
     bin/magento setup:upgrade
     bin/magento setup:di:compile
@@ -74,6 +82,16 @@ If you encounter issues, try the following steps:
 1. Ensure the plugin is enabled: `bin/magento module:status Convertcart_Analytics`
 2. Clear Magento cache: `bin/magento cache:clean`
 3. Check the logs in `var/log` for any error messages.
+
+### Setting up folder & file permissions,
+
+If you encounter folder permission issues on folder such as cache, please use the following commands to set the appropriate permissions for public files and directories:
+
+    find var generated pub/static pub/media app/etc -type f -exec chmod 644 {} \;
+    find var generated pub/static pub/media app/etc -type d -exec chmod 755 {} \;
+
+- 644 sets files to read and write for the owner, and read-only for group and others.
+- 755 sets directories to read, write, and execute for the owner, and read and execute for group and others.
 
 ## Contact
 
