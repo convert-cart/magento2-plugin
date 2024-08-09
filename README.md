@@ -86,9 +86,14 @@ If you encounter issues, try the following steps:
 ### Setting up folder & file permissions,
 
 If you encounter folder permission issues on folder such as cache, please use the following commands to set the appropriate permissions for public files and directories:
+- Goto magento2 directory
 
-    find var generated pub/static pub/media app/etc -type f -exec chmod 644 {} \;
-    find var generated pub/static pub/media app/etc -type d -exec chmod 755 {} \;
+      find . -type f -exec chmod 644 {} \;
+      find . -type d -exec chmod 755 {} \;
+      find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
+      find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
+      chown -R <magento user>:<web server group> . #(usually by default magento user and we user used to be www-data, check it with your server administrator)
+      chmod u+x bin/magento
 
 - 644 sets files to read and write for the owner, and read-only for group and others.
 - 755 sets directories to read, write, and execute for the owner, and read and execute for group and others.
