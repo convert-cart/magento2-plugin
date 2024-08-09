@@ -58,38 +58,30 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 CREATE TRIGGER update_cpe_after_insert_catalog_product_entity_decimal
                 AFTER INSERT ON catalog_product_entity_decimal
                 FOR EACH ROW
-                BEGIN
-                    UPDATE catalog_product_entity
-                    SET updated_at = NOW()
-                    WHERE entity_id = NEW.entity_id;
-                END;",
+                UPDATE catalog_product_entity
+                SET updated_at = NOW()
+                WHERE entity_id = NEW.entity_id;",
             'update_cpe_after_update_catalog_product_entity_decimal' => "
                 CREATE TRIGGER update_cpe_after_update_catalog_product_entity_decimal
                 AFTER UPDATE ON catalog_product_entity_decimal
                 FOR EACH ROW
-                BEGIN
-                    UPDATE catalog_product_entity
-                    SET updated_at = NOW()
-                    WHERE entity_id = NEW.entity_id;
-                END;",
+                UPDATE catalog_product_entity
+                SET updated_at = NOW()
+                WHERE entity_id = NEW.entity_id;",
             'update_cpe_after_insert_catalog_inventory_stock_item' => "
                 CREATE TRIGGER update_cpe_after_insert_catalog_inventory_stock_item
                 AFTER INSERT ON cataloginventory_stock_item
                 FOR EACH ROW
-                BEGIN
-                    UPDATE catalog_product_entity
-                    SET updated_at = NOW()
-                    WHERE entity_id = NEW.item_id;
-                END;",
+                UPDATE catalog_product_entity
+                SET updated_at = NOW()
+                WHERE entity_id = NEW.item_id;",
             'update_cpe_after_update_catalog_inventory_stock_item' => "
                 CREATE TRIGGER update_cpe_after_update_catalog_inventory_stock_item
                 AFTER UPDATE ON cataloginventory_stock_item
                 FOR EACH ROW
-                BEGIN
-                    UPDATE catalog_product_entity
-                    SET updated_at = NOW()
-                    WHERE entity_id = NEW.item_id;
-                END;"
+                UPDATE catalog_product_entity
+                SET updated_at = NOW()
+                WHERE entity_id = NEW.item_id;"
         ];
 
         // Loop through each trigger
