@@ -22,7 +22,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         $conn = $setup->getConnection();
         $tableName = $setup->getTable('convertcart_sync_activity');
 
-        if ($conn->isTableExists($tableName) !== true) {
+        if (!$conn->isTableExists($tableName)) {
             $table = $conn->newTable($tableName)
                         ->addColumn(
                             'id',
