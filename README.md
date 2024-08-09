@@ -83,6 +83,12 @@ If you encounter issues, try the following steps:
 2. Clear Magento cache: `bin/magento cache:clean`
 3. Check the logs in `var/log` for any error messages.
 
+## Uninstall
+
+Please use the following command to uninstall the plugin and delete all the tables and settings related to the plugin,
+
+      bin/magento module:uninstall Convertcart_Analytics
+
 ### Setting up folder & file permissions,
 
 If you encounter folder permission issues on folder such as cache, please use the following commands to set the appropriate permissions for public files and directories:
