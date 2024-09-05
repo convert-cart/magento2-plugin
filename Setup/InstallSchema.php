@@ -22,31 +22,31 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 
         if ($conn->isTableExists($tableName) != true) {
             $table = $conn->newTable($tableName)
-                        ->addColumn(
-                            'id',
-                            Table::TYPE_INTEGER,
-                            null,
-                            ['unsigned'=>true,'nullable'=>false,'auto_increment' => true,'primary'=>true]
-                        )
-                        ->addColumn(
-                            'item_id',
-                            Table::TYPE_INTEGER,
-                            null,
-                            ['nullable'=>false]
-                        )
-                        ->addColumn(
-                            'type',
-                            Table::TYPE_TEXT,
-                            55,
-                            ['nullable'=>false]
-                        )
-                        ->addColumn(
-                            'created_at',
-                            Table::TYPE_TIMESTAMP,
-                            null,
-                            ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
-                        )
-                        ->setOption('charset', 'utf8');
+                ->addColumn(
+                    'id',
+                    Table::TYPE_INTEGER,
+                    null,
+                    ['unsigned' => true, 'nullable' => false, 'auto_increment' => true, 'primary' => true]
+                )
+                ->addColumn(
+                    'item_id',
+                    Table::TYPE_INTEGER,
+                    null,
+                    ['nullable' => false]
+                )
+                ->addColumn(
+                    'type',
+                    Table::TYPE_TEXT,
+                    55,
+                    ['nullable' => false]
+                )
+                ->addColumn(
+                    'created_at',
+                    Table::TYPE_TIMESTAMP,
+                    null,
+                    ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
+                )
+                ->setOption('charset', 'utf8');
             $conn->createTable($table);
         }
 
@@ -61,37 +61,37 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         // Corresponding SQL to create each trigger
         $triggers = [
             "CREATE TRIGGER update_cpe_after_insert_catalog_product_entity_decimal
-             AFTER INSERT ON catalog_product_entity_decimal
+             AFTER INSERT ON " . $setup->getTable('catalog_product_entity_decimal') . "
              FOR EACH ROW
              BEGIN
-             UPDATE catalog_product_entity
+             UPDATE " . $setup->getTable('catalog_product_entity') . "
              SET updated_at = NOW()
              WHERE entity_id = NEW.entity_id;
              END;",
-             
+
             "CREATE TRIGGER update_cpe_after_update_catalog_product_entity_decimal
-             AFTER UPDATE ON catalog_product_entity_decimal
+             AFTER UPDATE ON " . $setup->getTable('catalog_product_entity_decimal') . "
              FOR EACH ROW
              BEGIN
-             UPDATE catalog_product_entity
+             UPDATE " . $setup->getTable('catalog_product_entity') . "
              SET updated_at = NOW()
              WHERE entity_id = NEW.entity_id;
              END;",
-             
+
             "CREATE TRIGGER update_cpe_after_insert_catalog_inventory_stock_item
-             AFTER INSERT ON cataloginventory_stock_item
+             AFTER INSERT ON " . $setup->getTable('cataloginventory_stock_item') . "
              FOR EACH ROW
              BEGIN
-             UPDATE catalog_product_entity
+             UPDATE " . $setup->getTable('catalog_product_entity') . "
              SET updated_at = NOW()
              WHERE entity_id = NEW.item_id;
              END;",
-             
+
             "CREATE TRIGGER update_cpe_after_update_catalog_inventory_stock_item
-             AFTER UPDATE ON cataloginventory_stock_item
+             AFTER UPDATE ON " . $setup->getTable('cataloginventory_stock_item') . "
              FOR EACH ROW
              BEGIN
-             UPDATE catalog_product_entity
+             UPDATE " . $setup->getTable('catalog_product_entity') . "
              SET updated_at = NOW()
              WHERE entity_id = NEW.item_id;
              END;"
