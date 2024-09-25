@@ -5,7 +5,7 @@ namespace Convertcart\Analytics\Setup;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Ddl\Table;
-use Magento\Framework\Exception\LocalizedException; // Import LocalizedException
+use Magento\Framework\Exception\LocalizedException;
 
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
@@ -21,9 +21,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
         $conn = $setup->getConnection();
         $tableName = $setup->getTable('convertcart_sync_activity');
 
-        // Check if the table already exists
         if (!$conn->isTableExists($tableName)) {
-            // Create the new table
             $table = $conn->newTable($tableName)
                 ->addColumn(
                     'id',
@@ -49,7 +47,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                     null,
                     ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
                 )
-                ->setOption('charset', 'utf8mb4'); // Use utf8mb4 for better compatibility
+                ->setOption('charset', 'utf8');
             $conn->createTable($table);
         }
 
