@@ -5,7 +5,7 @@ namespace Convertcart\Analytics\Setup;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Ddl\Table;
-use Magento\Framework\Exception\LocalizedException; // Import LocalizedException
+
 
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
@@ -49,7 +49,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                     null,
                     ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
                 )
-                ->setOption('charset', 'utf8'); // Use utf8mb4 for better compatibility
+                ->setOption('charset', 'utf8');
             $conn->createTable($table);
         }
 
@@ -58,38 +58,30 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 CREATE TRIGGER update_cpe_after_insert_catalog_product_entity_decimal
                 AFTER INSERT ON " . $setup->getTable('catalog_product_entity_decimal') . "
                 FOR EACH ROW
-                BEGIN
                     UPDATE " . $setup->getTable('catalog_product_entity') . "
                     SET updated_at = NOW()
-                    WHERE entity_id = NEW.entity_id;
-                END;",
+                    WHERE entity_id = NEW.entity_id;",
             'update_cpe_after_update_catalog_product_entity_decimal' => "
                 CREATE TRIGGER update_cpe_after_update_catalog_product_entity_decimal
                 AFTER UPDATE ON " . $setup->getTable('catalog_product_entity_decimal') . "
                 FOR EACH ROW
-                BEGIN
                     UPDATE " . $setup->getTable('catalog_product_entity') . "
                     SET updated_at = NOW()
-                    WHERE entity_id = NEW.entity_id;
-                END;",
+                    WHERE entity_id = NEW.entity_id;",
             'update_cpe_after_insert_catalog_inventory_stock_item' => "
                 CREATE TRIGGER update_cpe_after_insert_catalog_inventory_stock_item
                 AFTER INSERT ON " . $setup->getTable('cataloginventory_stock_item') . "
                 FOR EACH ROW
-                BEGIN
                     UPDATE " . $setup->getTable('catalog_product_entity') . "
                     SET updated_at = NOW()
-                    WHERE entity_id = NEW.product_id;
-                END;",
+                    WHERE entity_id = NEW.product_id;",
             'update_cpe_after_update_catalog_inventory_stock_item' => "
                 CREATE TRIGGER update_cpe_after_update_catalog_inventory_stock_item
                 AFTER UPDATE ON " . $setup->getTable('cataloginventory_stock_item') . "
                 FOR EACH ROW
-                BEGIN
                     UPDATE " . $setup->getTable('catalog_product_entity') . "
                     SET updated_at = NOW()
-                    WHERE entity_id = NEW.product_id;
-                END;"
+                    WHERE entity_id = NEW.product_id;"
         ];
 
         // Loop through each trigger
@@ -107,7 +99,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                     $conn->query($triggerSql);
                 } catch (\Exception $e) {
                     // Handle exception if trigger creation fails
-                    throw new LocalizedException(__('Error creating trigger %1: %2', $triggerName, $e->getMessage()));
+                    throw new \RuntimeException('Error creating trigger: ' . $e->getMessage());
                 }
             }
         }
