@@ -1,7 +1,7 @@
 # Convert Cart Magento 2 Plugin
 
 ![Magento 2](https://img.shields.io/badge/Magento-2-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-1.0.6-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 [![Packagist](https://img.shields.io/packagist/v/convert-cart/analytics.svg)](https://packagist.org/packages/convert-cart/analytics)
 
@@ -36,10 +36,10 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
     composer require convert-cart/analytics
     ```
 
-    If you're intending to setting up a domain in app-beta.convertcart.com (for beta testing), please use tag name followed by the suffix `-beta` like `1.0.6-beta`. The command will be like,
+    If you're intending to setting up a domain in app-beta.convertcart.com (for beta testing), please use tag name followed by the suffix `-beta` like `1.0.7-beta`. The command will be like,
 
     ```sh
-    composer require convert-cart/analytics:1.0.6-beta
+    composer require convert-cart/analytics:1.0.7-beta
     ```
 
     If you wanted to know the exact changes that's needed to setup a beta server on a production tag, you can take a look into this [commit](https://github.com/convert-cart/magento2-plugin/commit/7fcd6766d00aa0c1f9c24365864a5738bc893252).
@@ -83,12 +83,23 @@ If you encounter issues, try the following steps:
 2. Clear Magento cache: `bin/magento cache:clean`
 3. Check the logs in `var/log` for any error messages.
 
+## Uninstall
+
+Please use the following command to uninstall the plugin and delete all the tables and settings related to the plugin,
+
+      bin/magento module:uninstall Convertcart_Analytics
+
 ### Setting up folder & file permissions,
 
 If you encounter folder permission issues on folder such as cache, please use the following commands to set the appropriate permissions for public files and directories:
+- Goto magento2 directory
 
-    find var generated pub/static pub/media app/etc -type f -exec chmod 644 {} \;
-    find var generated pub/static pub/media app/etc -type d -exec chmod 755 {} \;
+      find . -type f -exec chmod 644 {} \;
+      find . -type d -exec chmod 755 {} \;
+      find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
+      find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
+      chown -R <magento user>:<web server group> . #(usually by default magento user and we user used to be www-data, check it with your server administrator)
+      chmod u+x bin/magento
 
 - 644 sets files to read and write for the owner, and read-only for group and others.
 - 755 sets directories to read, write, and execute for the owner, and read and execute for group and others.
