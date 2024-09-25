@@ -84,7 +84,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
              BEGIN
              UPDATE " . $setup->getTable('catalog_product_entity') . "
              SET updated_at = NOW()
-             WHERE entity_id = NEW.item_id;
+             WHERE entity_id = NEW.product_id;
              END;",
 
             "CREATE TRIGGER update_cpe_after_update_catalog_inventory_stock_item
@@ -93,7 +93,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
              BEGIN
              UPDATE " . $setup->getTable('catalog_product_entity') . "
              SET updated_at = NOW()
-             WHERE entity_id = NEW.item_id;
+             WHERE entity_id = NEW.product_id;
              END;"
         ];
 
