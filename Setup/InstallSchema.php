@@ -49,7 +49,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                     null,
                     ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
                 )
-                ->setOption('charset', 'utf8mb4'); // Use utf8mb4 for better compatibility
+                ->setOption('charset', 'utf8'); // Use utf8mb4 for better compatibility
             $conn->createTable($table);
         }
 
@@ -91,7 +91,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                     WHERE entity_id = NEW.product_id;
                 END;"
         ];
-        
+
         // Loop through each trigger
         foreach ($triggers as $triggerName => $triggerSql) {
             // Check if the trigger already exists
@@ -100,7 +100,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                  WHERE TRIGGER_NAME = :trigger_name AND TRIGGER_SCHEMA = DATABASE()",
                 ['trigger_name' => $triggerName]
             );
-        
+
             // If the trigger does not exist, create it
             if (!$triggerExists) {
                 try {
@@ -111,7 +111,7 @@ class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
                 }
             }
         }
-        
+
         $setup->endSetup(); // Finalize the setup process
     }
 }
