@@ -1,7 +1,7 @@
 # Convert Cart Magento 2 Plugin
 
 ![Magento 2](https://img.shields.io/badge/Magento-2-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.8-blue.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 [![Packagist](https://img.shields.io/packagist/v/convert-cart/analytics.svg)](https://packagist.org/packages/convert-cart/analytics)
 
@@ -36,10 +36,10 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
     composer require convert-cart/analytics
     ```
 
-    If you're intending to setting up a domain in app-beta.convertcart.com (for beta testing), please use tag name followed by the suffix `-beta` like `1.0.7-beta`. The command will be like,
+    If you're intending to setting up a domain in app-beta.convertcart.com (for beta testing), please use tag name followed by the suffix `-beta` like `1.0.8-beta`. The command will be like,
 
     ```sh
-    composer require convert-cart/analytics:1.0.7-beta
+    composer require convert-cart/analytics:1.0.8-beta
     ```
 
     If you wanted to know the exact changes that's needed to setup a beta server on a production tag, you can take a look into this [commit](https://github.com/convert-cart/magento2-plugin/commit/7fcd6766d00aa0c1f9c24365864a5738bc893252).
