@@ -4,6 +4,7 @@
 BRANCH="master"
 MAIN_VERSION=$1
 BETA_VERSION="${MAIN_VERSION}-beta"
+BACKUP_BRANCH="temp-tagging-branch"  # Define the backup branch name
 
 # Color codes
 RED='\033[0;31m'
@@ -32,8 +33,8 @@ cleanup() {
     git checkout $BRANCH || printf "${RED}Failed to checkout $BRANCH during cleanup.${NC}\n"
 
     # Delete the temporary branch if it exists
-    if git show-ref --verify --quiet refs/heads/temp-tagging-branch; then
-        git branch -D temp-tagging-branch || printf "${RED}Failed to delete temporary branch temp-tagging-branch.${NC}\n"
+    if git show-ref --verify --quiet refs/heads/$BACKUP_BRANCH; then
+        git branch -D $BACKUP_BRANCH || printf "${RED}Failed to delete temporary branch $BACKUP_BRANCH.${NC}\n"
     fi
 }
 
@@ -55,18 +56,29 @@ printf "${YELLOW}Checking out the latest master branch...${NC}\n"
 git checkout $BRANCH || handle_error "Failed to checkout $BRANCH"
 git pull origin $BRANCH || handle_error "Failed to pull latest changes from $BRANCH"
 
+# Check if old backup branch exists and remove it
+if git show-ref --verify --quiet refs/heads/$BACKUP_BRANCH; then
+    printf "${YELLOW}Old backup branch '$BACKUP_BRANCH' found. Deleting it...${NC}\n"
+    git branch -D $BACKUP_BRANCH || handle_error "Failed to delete old backup branch"
+fi
+
 # Create a backup branch to prevent affecting master directly
-BACKUP_BRANCH="temp-tagging-branch"
 git checkout -b $BACKUP_BRANCH || handle_error "Failed to create temporary branch $BACKUP_BRANCH"
 
-# Function to check if a tag exists
-check_tag_exists() {
-    git tag -l | grep -q "$1"
+# Function to check if a tag exists on remote
+check_remote_tag_exists() {
+    git fetch --tags
+    git ls-remote --tags origin | grep -q "refs/tags/$1"
+}
+
+# Function to get tag creation date from remote
+get_tag_creation_date() {
+    git log -1 --format=%aD "$1" 2>/dev/null
 }
 
 # Function to confirm tag deletion
 confirm_tag_deletion() {
-    echo -n "${YELLOW}Tag '$1' already exists. Do you want to delete it and recreate it? (y/n): ${NC}"
+    echo -n "${YELLOW}Tag '$1' already exists on remote (created on: $2). \nDo you want to delete it and recreate it? (y/n): ${NC}"
     read response
     if [ "$response" != "y" ]; then
         printf "${YELLOW}Keeping existing tag '%s'. Skipping creation...${NC}\n" "$1"
@@ -74,6 +86,29 @@ confirm_tag_deletion() {
     fi
     return 0
 }
+
+# Check for existing remote tags
+if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
+    if check_remote_tag_exists "$MAIN_VERSION"; then
+        creation_date=$(get_tag_creation_date "$MAIN_VERSION")
+        if confirm_tag_deletion "$MAIN_VERSION" "$creation_date"; then
+            git tag -d "$MAIN_VERSION" || handle_error "Failed to delete existing production tag"
+        else
+            printf "${GREEN}Skipping creation of production tag %s.${NC}\n" "$MAIN_VERSION"
+        fi
+    fi
+fi
+
+if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
+    if check_remote_tag_exists "$BETA_VERSION"; then
+        creation_date=$(get_tag_creation_date "$BETA_VERSION")
+        if confirm_tag_deletion "$BETA_VERSION" "$creation_date"; then
+            git tag -d "$BETA_VERSION" || handle_error "Failed to delete existing beta tag"
+        else
+            printf "${GREEN}Skipping creation of beta tag %s.${NC}\n" "$BETA_VERSION"
+        fi
+    fi
+fi
 
 # Update version in composer.json
 printf "${YELLOW}Updating composer.json with version %s...${NC}\n" "$MAIN_VERSION"
@@ -85,15 +120,6 @@ sed -i "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.
 
 # Commit changes for production tag if chosen
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
-    if check_tag_exists "$MAIN_VERSION"; then
-        if confirm_tag_deletion "$MAIN_VERSION"; then
-            git tag -d "$MAIN_VERSION" || handle_error "Failed to delete existing production tag"
-        else
-            printf "${GREEN}Skipping creation of production tag %s.${NC}\n" "$MAIN_VERSION"
-        fi
-    fi
-    
-    # Commit and create a production tag
     git add composer.json etc/module.xml || handle_error "Failed to add files for production commit"
     git commit -m "Release version $MAIN_VERSION" || handle_error "Failed to commit production changes"
     git tag -a "$MAIN_VERSION" -m "Version $MAIN_VERSION" || handle_error "Failed to create production tag"
@@ -114,15 +140,6 @@ sed -i 's/cdn.convertcart.com/cdn-beta.convertcart.com/' view/frontend/templates
 
 # Commit changes for beta tag if chosen
 if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
-    if check_tag_exists "$BETA_VERSION"; then
-        if confirm_tag_deletion "$BETA_VERSION"; then
-            git tag -d "$BETA_VERSION" || handle_error "Failed to delete existing beta tag"
-        else
-            printf "${GREEN}Skipping creation of beta tag %s.${NC}\n" "$BETA_VERSION"
-        fi
-    fi
-    
-    # Commit and create a beta tag
     git add composer.json etc/module.xml view/frontend/templates/init.phtml || handle_error "Failed to add files for beta commit"
     git commit -m "Release beta version $BETA_VERSION" || handle_error "Failed to commit beta version"
     git tag -a "$BETA_VERSION" -m "Beta version $BETA_VERSION" || handle_error "Failed to create beta tag"
