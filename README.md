@@ -107,3 +107,11 @@ If you encounter folder permission issues on folder such as cache, please use th
 ## Contact
 
 Please contact [sales@convertcart.com](mailto:sales@convertcart.com) if any issues occur during the integration process.
+
+## For Development
+
+After making any changes to the master branch, you can create new version tags (for beta and production) by running the following command:
+
+      sh tagger.sh VERSION_NUMBER
+
+Make sure to replace `VERSION_NUMBER` with the actual version number you want to create.
