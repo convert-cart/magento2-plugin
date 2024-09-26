@@ -23,6 +23,10 @@ handle_error() {
 
 # Cleanup function
 cleanup() {
+    git reset --all
+    git clean --all
+    git checkout --all
+
     # Checkout master branch
     printf "${YELLOW}Checking out master branch during cleanup...${NC}\n"
     git checkout $BRANCH || printf "${RED}Failed to checkout $BRANCH during cleanup.${NC}\n"
@@ -44,7 +48,7 @@ echo "1) Production tag"
 echo "2) Beta tag"
 echo "3) Both"
 echo -n "Enter your choice (1/2/3): "
-read -r choice
+read choice
 
 # Ensure we are on the latest master branch
 printf "${YELLOW}Checking out the latest master branch...${NC}\n"
@@ -63,8 +67,8 @@ check_tag_exists() {
 # Function to confirm tag deletion
 confirm_tag_deletion() {
     echo -n "${YELLOW}Tag '$1' already exists. Do you want to delete it and recreate it? (y/n): ${NC}"
-    read -r response
-    if [[ "$response" != "y" ]]; then
+    read response
+    if [ "$response" != "y" ]; then
         printf "${YELLOW}Keeping existing tag '%s'. Skipping creation...${NC}\n" "$1"
         return 1
     fi
@@ -80,7 +84,7 @@ printf "${YELLOW}Updating setup_version in module.xml...${NC}\n"
 sed -i "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.xml || handle_error "Failed to update module.xml"
 
 # Commit changes for production tag if chosen
-if [[ "$choice" == "1" || "$choice" == "3" ]]; then
+if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
     if check_tag_exists "$MAIN_VERSION"; then
         if confirm_tag_deletion "$MAIN_VERSION"; then
             git tag -d "$MAIN_VERSION" || handle_error "Failed to delete existing production tag"
@@ -109,7 +113,7 @@ printf "${YELLOW}Updating domain in init.phtml for beta...${NC}\n"
 sed -i 's/cdn.convertcart.com/cdn-beta.convertcart.com/' view/frontend/templates/init.phtml || handle_error "Failed to update domain in init.phtml for beta"
 
 # Commit changes for beta tag if chosen
-if [[ "$choice" == "2" || "$choice" == "3" ]]; then
+if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
     if check_tag_exists "$BETA_VERSION"; then
         if confirm_tag_deletion "$BETA_VERSION"; then
             git tag -d "$BETA_VERSION" || handle_error "Failed to delete existing beta tag"
@@ -126,14 +130,14 @@ if [[ "$choice" == "2" || "$choice" == "3" ]]; then
 fi
 
 # Push tags to remote if created
-if [[ "$choice" == "1" || "$choice" == "3" ]]; then
+if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
     printf "${YELLOW}Pushing production tag to remote...${NC}\n"
-    git push -f origin "$MAIN_VERSION" || handle_error "Failed to push production tag"
+    git push origin "$MAIN_VERSION" || handle_error "Failed to push production tag"
 fi
 
-if [[ "$choice" == "2" || "$choice" == "3" ]]; then
+if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
     printf "${YELLOW}Pushing beta tag to remote...${NC}\n"
-    git push -f origin "$BETA_VERSION" || handle_error "Failed to push beta tag"
+    git push origin "$BETA_VERSION" || handle_error "Failed to push beta tag"
 fi
 
 # Final cleanup: Checkout master and clean up the temporary branch
