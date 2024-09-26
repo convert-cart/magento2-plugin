@@ -23,9 +23,9 @@ handle_error() {
 
 # Cleanup function
 cleanup() {
-    git reset --all
-    git clean --all
-    git checkout --all
+    git reset .
+    git clean -fd .
+    git checkout .
 
     # Checkout master branch
     printf "${YELLOW}Checking out master branch during cleanup...${NC}\n"
