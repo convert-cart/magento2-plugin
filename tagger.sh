@@ -132,12 +132,12 @@ fi
 # Push tags to remote if created
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
     printf "${YELLOW}Pushing production tag to remote...${NC}\n"
-    git push origin "$MAIN_VERSION" || handle_error "Failed to push production tag"
+    git push -f origin "$MAIN_VERSION" || handle_error "Failed to push production tag"
 fi
 
 if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
     printf "${YELLOW}Pushing beta tag to remote...${NC}\n"
-    git push origin "$BETA_VERSION" || handle_error "Failed to push beta tag"
+    git push -f origin "$BETA_VERSION" || handle_error "Failed to push beta tag"
 fi
 
 # Final cleanup: Checkout master and clean up the temporary branch
