@@ -25,7 +25,7 @@ sed -i "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.
 git add composer.json etc/module.xml
 git commit -m "Release version $MAIN_VERSION"
 git tag -a "$MAIN_VERSION" -m "Version $MAIN_VERSION"
-echo "Production tag v$MAIN_VERSION created"
+echo "Production tag $MAIN_VERSION created"
 
 # Update to beta version in composer.json
 echo "Updating composer.json with version $BETA_VERSION"
