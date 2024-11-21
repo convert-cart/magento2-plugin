@@ -1,10 +1,16 @@
-<?php
-// @codingStandardsIgnoreFile
-?>
-<!-- ConvertCart -->
-<script type="text/javascript">
-  require([
-    "//cdn.convertcart.com/<?php echo $clientKey; ?>.js"
-  ]);
+<script type="text/x-magento-init">
+{
+  "*": {
+    "mage/requirejs": {
+      "config": {
+        "paths": {
+          "convertCart": "//cdn.convertcart.com/<?php echo $clientKey; ?>"
+        }
+      }
+    }
+  }
+}
 </script>
-<!-- ConvertCart -->
+<script type="text/javascript">
+  require(['convertCart']);
+</script>
