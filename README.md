@@ -1,7 +1,6 @@
 # Convert Cart Magento 2 Plugin
 
 ![Magento 2](https://img.shields.io/badge/Magento-2-brightgreen.svg)
-![Version](https://img.shields.io/badge/version-1.0.8-blue.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 [![Packagist](https://img.shields.io/packagist/v/convert-cart/analytics.svg)](https://packagist.org/packages/convert-cart/analytics)
 
