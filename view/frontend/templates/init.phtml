@@ -1,16 +1,35 @@
-<script type="text/x-magento-init">
-{
-  "*": {
-    "mage/requirejs": {
-      "config": {
-        "paths": {
-          "convertCart": "//cdn.convertcart.com/<?php echo $clientKey; ?>"
-        }
-      }
-    }
-  }
-}
-</script>
+<?php
+// @codingStandardsIgnoreFile
+$clientKey = htmlspecialchars($clientKey, ENT_QUOTES, 'UTF-8');
+?>
+<!-- ConvertCart Initialization Started -->
 <script type="text/javascript">
-  require(['convertCart']);
+(function() {
+    function loadScript(src) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = src;
+        script.async = true;
+        script.onload = function() {
+            console.log('ConvertCart script loaded:', src);
+        };
+        script.onerror = function() {
+            console.error('Failed to load ConvertCart script:', src);
+        };
+        document.head.appendChild(script);
+    }
+
+    var scriptSrc = "//cdn.convertcart.com/<?php echo $clientKey; ?>.js";
+
+    if (typeof require !== 'undefined') {
+        require([scriptSrc], function() {
+            console.log('ConvertCart loaded via RequireJS');
+        }, function() {
+            loadScript(scriptSrc);
+        });
+    } else {
+        loadScript(scriptSrc);
+    }
+})();
 </script>
+<!-- ConvertCart Initialization Ended -->
