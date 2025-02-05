@@ -39,16 +39,17 @@ class SyncApi implements \Convertcart\Analytics\Api\SyncRepositoryInterface
     {
         try {
             // to delete the previous synced data ($id is last sync id);
-            if ($id) {
-                $delete = $this->_deletedProduct->create()
-                ->getCollection()
-                ->addFieldToFilter("id", ['lteq'=> $id])
-                ->addFieldToFilter("type", ["eq"=>$type]);
-                $delete->walk('delete');
-            }
-
             $model = $this->_deletedProduct->create()->getCollection();
-            $model->getSelect()->where('type = ?', $type)->limit($limit);
+
+            // Filter by type
+            $model->addFieldToFilter("type", ["eq" => $type]);
+            if ($id) {
+                // If an ID is provided, fetch only records greater than this ID
+                $model->addFieldToFilter("id", ['gt' => $id]);
+            }
+            // Limit the number of records
+            $model->setPageSize($limit);
+
             return $model->getData();
         } catch (\Exception $e) {
             $this->_logger->error($e->getMessage());
