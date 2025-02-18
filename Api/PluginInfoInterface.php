@@ -1,5 +1,5 @@
 <?php
-namespace Vendor\Module\Api;
+namespace Convertcart\Analytics\Api;
 
 interface PluginInfoInterface
 {
