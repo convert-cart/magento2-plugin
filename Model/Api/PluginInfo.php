@@ -1,7 +1,7 @@
 <?php
-namespace Vendor\Module\Model;
+namespace Convertcart\Analytics\Model\Api;
 
-use Vendor\Module\Api\PluginInfoInterface;
+use Convertcart\Analytics\Api\PluginInfoInterface;
 use Magento\Framework\App\ResourceConnection;
 
 class PluginInfo implements PluginInfoInterface
@@ -25,7 +25,7 @@ class PluginInfo implements PluginInfoInterface
     public function getPluginInfo()
     {
         // Get plugin version
-        $moduleCode = 'Vendor_Module';
+        $moduleCode = 'Convertcart_Analytics';
         $moduleInfo = $this->moduleList->getOne($moduleCode);
         $pluginVersion = isset($moduleInfo['setup_version']) ? $moduleInfo['setup_version'] : 'Unknown';
 
