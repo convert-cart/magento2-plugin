@@ -6,7 +6,7 @@ interface PluginInfoInterface
     /**
      * Get plugin information.
      *
-     * @return array
+     * @return \stdClass
      */
     public function getPluginInfo();
 }
