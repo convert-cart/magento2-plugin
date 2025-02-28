@@ -42,7 +42,7 @@ class PluginInfo implements PluginInfoInterface
     /**
      * Get plugin information.
      *
-     * @return array
+     * @return \stdClass
      */
     public function getPluginInfo()
     {
@@ -71,10 +71,10 @@ class PluginInfo implements PluginInfoInterface
         }
 
         // Return consolidated information
-        return [
+        return (object) [
             'plugin_version' => $pluginVersion,
-            'tables_exist' => $tablesExist,
-            'triggers_exist' => $triggersExist,
+            'tables' => $tablesExist,
+            'triggers' => $triggersExist,
         ];
     }
 }
