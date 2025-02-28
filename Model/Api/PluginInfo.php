@@ -44,7 +44,7 @@ class PluginInfo implements PluginInfoInterface
      *
      * @return \stdClass
      */
-    public function getPluginInfo()
+    public function getPluginInfo(): \stdClass
     {
         // Get plugin version
         $moduleCode = 'Convertcart_Analytics';
@@ -69,7 +69,9 @@ class PluginInfo implements PluginInfoInterface
             $triggers = $this->connection->fetchAll($query);
             $triggersExist[$trigger] = !empty($triggers);
         }
-
+        $this->logger->info('Plugin Version ' . json_encode($pluginVersion));
+        $this->logger->info('Tables Exist: ' . json_encode($tablesExist));
+        $this->logger->info('Triggers Exist: ' . json_encode($triggersExist));
         // Return consolidated information
         return (object) [
             'plugin_version' => $pluginVersion,
