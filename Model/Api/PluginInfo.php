@@ -3,18 +3,40 @@ namespace Convertcart\Analytics\Model\Api;
 
 use Convertcart\Analytics\Api\PluginInfoInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Module\ModuleListInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 
 class PluginInfo implements PluginInfoInterface
 {
+    /**
+     * @var ResourceConnection
+     */
     protected $resourceConnection;
+
+    /**
+     * @var ModuleListInterface
+     */
     protected $moduleList;
+
+    /**
+     * @var AdapterInterface
+     */
+    protected $connection;
+
+    /**
+     * Constructor.
+     *
+     * @param ResourceConnection $resourceConnection
+     * @param ModuleListInterface $moduleList
+     */
 
     public function __construct(
         ResourceConnection $resourceConnection,
-        \Magento\Framework\Module\ModuleListInterface $moduleList
+        ModuleListInterface $moduleList
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->moduleList = $moduleList;
+        $this->connection = $resourceConnection->getConnection();
     }
 
     /**
@@ -31,12 +53,12 @@ class PluginInfo implements PluginInfoInterface
 
         // Check if required tables exist
         $requiredTables = ['convertcart_sync_activity']; // Replace with your actual table names
-        $connection = $this->resourceConnection->getConnection();
-        $existingTables = $connection->getTables();
+        $existingTables = $this->connection->listTables();
 
         $tablesExist = [];
         foreach ($requiredTables as $table) {
-            $tablesExist[$table] = in_array($this->resourceConnection->getTableName($table), $existingTables);
+            $tableName = $this->resourceConnection->getTableName($table);
+            $tablesExist[$table] = in_array($tableName, $existingTables);
         }
 
         // Check if required triggers exist
@@ -44,7 +66,7 @@ class PluginInfo implements PluginInfoInterface
         $triggersExist = [];
         foreach ($requiredTriggers as $trigger) {
             $query = "SHOW TRIGGERS LIKE '{$trigger}'";
-            $triggers = $connection->fetchAll($query);
+            $triggers = $this->connection->fetchAll($query);
             $triggersExist[$trigger] = !empty($triggers);
         }
 
