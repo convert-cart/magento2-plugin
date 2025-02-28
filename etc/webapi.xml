@@ -7,7 +7,7 @@
 		</resources>
 	</route>
 	<route url="/V1/cc/plugin-info" method="GET">
-		<service class="Vendor\Module\Api\PluginInfoInterface" method="getPluginInfo"/>
+		<service class="Convertcart\Analytics\Api\PluginInfoInterface" method="getPluginInfo"/>
 		<resources>
 			<resource ref="anonymous"/>
 		</resources>
