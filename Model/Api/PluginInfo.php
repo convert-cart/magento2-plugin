@@ -11,10 +11,15 @@ class PluginInfo implements PluginInfoInterface
     /**
      * @var ResourceConnection
      */
+
     protected $resourceConnection;
 
     /**
      * @var ModuleListInterface
+     */
+
+    /**
+     * @var \Convertcart\Analytics\Logger\Logger
      */
     protected $moduleList;
 
@@ -22,6 +27,8 @@ class PluginInfo implements PluginInfoInterface
      * @var AdapterInterface
      */
     protected $connection;
+
+    protected $_logger;
 
     /**
      * Constructor.
@@ -32,10 +39,12 @@ class PluginInfo implements PluginInfoInterface
 
     public function __construct(
         ResourceConnection $resourceConnection,
-        ModuleListInterface $moduleList
+        ModuleListInterface $moduleList,
+        \Convertcart\Analytics\Logger\Logger $_logger
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->moduleList = $moduleList;
+        $this->_logger = $_logger;
         $this->connection = $resourceConnection->getConnection();
     }
 
@@ -69,9 +78,9 @@ class PluginInfo implements PluginInfoInterface
             $triggers = $this->connection->fetchAll($query);
             $triggersExist[$trigger] = !empty($triggers);
         }
-        $this->logger->info('Plugin Version ' . json_encode($pluginVersion));
-        $this->logger->info('Tables Exist: ' . json_encode($tablesExist));
-        $this->logger->info('Triggers Exist: ' . json_encode($triggersExist));
+        $this->_logger->log(null, 'Plugin Version ' + json_encode($pluginVersion));
+        $this->_logger->log(null, 'Tables Exist: ' + json_encode($tablesExist));
+        $this->_logger->log(null, 'Triggers Exist: ' + json_encode($triggersExist));
         // Return consolidated information
         return (object) [
             'plugin_version' => $pluginVersion,
