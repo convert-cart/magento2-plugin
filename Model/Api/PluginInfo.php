@@ -93,6 +93,6 @@ class PluginInfo implements PluginInfoInterface
         $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
 
         // Return the array directly instead of json_decode(json_encode())
-        return json_encode($data);
+        return json_decode(json_encode($data));
     }
 }
