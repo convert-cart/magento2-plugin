@@ -6,7 +6,8 @@ interface PluginInfoInterface
     /**
      * Get plugin information.
      *
-     * @return \stdClass
+     * @api
+     * @return \Convertcart\Analytics\Api\Data\PluginInfoInterface
      */
     public function getPluginInfo();
 }

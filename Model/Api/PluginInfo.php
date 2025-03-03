@@ -5,7 +5,8 @@ use Convertcart\Analytics\Api\PluginInfoInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use stdClass;
+use Magento\Framework\DataObject;
+use Convertcart\Analytics\Model\Data\PluginInfoFactory;
 
 class PluginInfo implements PluginInfoInterface
 {
@@ -33,27 +34,35 @@ class PluginInfo implements PluginInfoInterface
     protected $logger;
 
     /**
+     * @var PluginInfoFactory
+     */
+    protected $pluginInfoFactory;
+
+    /**
      * Constructor.
      *
      * @param ResourceConnection $resourceConnection
      * @param ModuleListInterface $moduleList
+     * @param PluginInfoFactory $pluginInfoFactory
      */
 
     public function __construct(
         ResourceConnection $resourceConnection,
         ModuleListInterface $moduleList,
-        \Convertcart\Analytics\Logger\Logger $logger
+        \Convertcart\Analytics\Logger\Logger $logger,
+        \Convertcart\Analytics\Model\Data\PluginInfoFactory $pluginInfoFactory
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->moduleList = $moduleList;
         $this->connection = $resourceConnection->getConnection();
         $this->logger = $logger;
+        $this->pluginInfoFactory = $pluginInfoFactory;
     }
 
     /**
      * Get plugin information.
      *
-     * @return \stdClass
+     * @return \Convertcart\Analytics\Api\Data\PluginInfoInterface
      */
     public function getPluginInfo()
     {
@@ -88,19 +97,16 @@ class PluginInfo implements PluginInfoInterface
             $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
         }
 
-        // Ensure it is an associative array
-        $data = [
-            'plugin_info' => [
-                'version' => $pluginVersion,
-                'tables' => $tablesExist,
-                'triggers' => $triggersExist
-            ]
-        ];
+        /** @var \Convertcart\Analytics\Model\Data\PluginInfo $data */
+        $data = $this->pluginInfoFactory->create();
+        $data->setVersion($pluginVersion);
+        $data->setTables($tablesExist);
+        $data->setTriggers($triggersExist);
 
         // Logging for debugging
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
-        $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
+        $this->logger->debug('Plugin Info Data: ' . print_r($data->getData(), true));
 
-        return $data; // Magento will automatically convert this to JSON correctly
+        return $data;
     }
 }

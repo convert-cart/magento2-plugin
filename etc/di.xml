@@ -16,4 +16,5 @@
     <preference for="Convertcart\Analytics\Api\SyncRepositoryInterface" type="Convertcart\Analytics\Model\Api\SyncApi"/>
     <preference for="Convertcart\Analytics\Api\Data\SyncInterface" type="Convertcart\Analytics\Model\SyncManagement" />
     <preference for="Convertcart\Analytics\Api\PluginInfoInterface" type="Convertcart\Analytics\Model\Api\PluginInfo" />
+    <preference for="Convertcart\Analytics\Api\Data\PluginInfoInterface" type="Convertcart\Analytics\Model\Data\PluginInfo" />
 </config>
