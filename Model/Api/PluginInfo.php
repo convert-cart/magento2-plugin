@@ -100,8 +100,19 @@ class PluginInfo implements PluginInfoInterface
         /** @var \Convertcart\Analytics\Model\Data\PluginInfo $data */
         $data = $this->pluginInfoFactory->create();
         $data->setVersion($pluginVersion);
-        $data->setTables($tablesExist);
-        $data->setTriggers($triggersExist);
+        
+        // Ensure associative arrays
+        $tables = [];
+        foreach ($tablesExist as $table => $exists) {
+            $tables[$table] = $exists;
+        }
+        $data->setTables($tables);
+
+        $triggers = [];
+        foreach ($triggersExist as $trigger => $exists) {
+            $triggers[$trigger] = $exists;
+        }
+        $data->setTriggers($triggers);
 
         // Logging for debugging
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));

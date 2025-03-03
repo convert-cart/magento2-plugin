@@ -25,30 +25,30 @@ interface PluginInfoInterface
     /**
      * Get tables
      *
-     * @return \Convertcart\Analytics\Api\Data\TableStatusInterface[]
+     * @return mixed[]
      */
     public function getTables();
 
     /**
      * Set tables
      *
-     * @param \Convertcart\Analytics\Api\Data\TableStatusInterface[] $tables
+     * @param mixed[] $tables
      * @return $this
      */
-    public function setTables(array $tables);
+    public function setTables($tables);
 
     /**
      * Get triggers
      *
-     * @return \Convertcart\Analytics\Api\Data\TriggerStatusInterface[]
+     * @return mixed[]
      */
     public function getTriggers();
 
     /**
      * Set triggers
      *
-     * @param \Convertcart\Analytics\Api\Data\TriggerStatusInterface[] $triggers
+     * @param mixed[] $triggers
      * @return $this
      */
-    public function setTriggers(array $triggers);
+    public function setTriggers($triggers);
 } 
