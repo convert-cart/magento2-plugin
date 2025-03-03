@@ -1,7 +1,9 @@
 <?php
 namespace Convertcart\Analytics\Api\Data;
 
-interface PluginInfoInterface
+use Magento\Framework\Api\ExtensibleDataInterface;
+
+interface PluginInfoInterface extends ExtensibleDataInterface
 {
     const VERSION = 'version';
     const TABLES = 'tables';
@@ -25,14 +27,14 @@ interface PluginInfoInterface
     /**
      * Get tables
      *
-     * @return mixed[]
+     * @return \Magento\Framework\Api\ExtensionAttributesInterface[]|array
      */
     public function getTables();
 
     /**
      * Set tables
      *
-     * @param mixed[] $tables
+     * @param array $tables
      * @return $this
      */
     public function setTables($tables);
@@ -40,14 +42,14 @@ interface PluginInfoInterface
     /**
      * Get triggers
      *
-     * @return mixed[]
+     * @return \Magento\Framework\Api\ExtensionAttributesInterface[]|array
      */
     public function getTriggers();
 
     /**
      * Set triggers
      *
-     * @param mixed[] $triggers
+     * @param array $triggers
      * @return $this
      */
     public function setTriggers($triggers);

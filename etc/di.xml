@@ -17,4 +17,10 @@
     <preference for="Convertcart\Analytics\Api\Data\SyncInterface" type="Convertcart\Analytics\Model\SyncManagement" />
     <preference for="Convertcart\Analytics\Api\PluginInfoInterface" type="Convertcart\Analytics\Model\Api\PluginInfo" />
     <preference for="Convertcart\Analytics\Api\Data\PluginInfoInterface" type="Convertcart\Analytics\Model\Data\PluginInfo" />
+    <virtualType name="Convertcart\Analytics\Model\ResourceModel\PluginInfo\Collection" type="Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection">
+        <arguments>
+            <argument name="model" xsi:type="string">Convertcart\Analytics\Model\Data\PluginInfo</argument>
+            <argument name="resourceModel" xsi:type="string">Convertcart\Analytics\Model\ResourceModel\PluginInfo</argument>
+        </arguments>
+    </virtualType>
 </config>
