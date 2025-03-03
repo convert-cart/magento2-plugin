@@ -27,6 +27,11 @@ class PluginInfo implements PluginInfoInterface
     protected $connection;
 
     /**
+     * @var \Convertcart\Analytics\Logger\Logger
+     */
+    protected $logger;
+
+    /**
      * Constructor.
      *
      * @param ResourceConnection $resourceConnection
@@ -35,11 +40,13 @@ class PluginInfo implements PluginInfoInterface
 
     public function __construct(
         ResourceConnection $resourceConnection,
-        ModuleListInterface $moduleList
+        ModuleListInterface $moduleList,
+        \Convertcart\Analytics\Logger\Logger $logger
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->moduleList = $moduleList;
         $this->connection = $resourceConnection->getConnection();
+        $this->logger = $logger;
     }
 
     /**
@@ -83,8 +90,8 @@ class PluginInfo implements PluginInfoInterface
         ];
 
         // Add this for debugging
-        error_log('existing trigger: ' . print_r($existingTriggers, true));
-        error_log('Plugin Info Data: ' . print_r($data, true));
+        $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
+        $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
 
         return json_decode(json_encode($data));
     }
