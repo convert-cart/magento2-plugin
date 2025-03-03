@@ -73,10 +73,11 @@ class PluginInfo implements PluginInfoInterface
             $triggersExist[$trigger] = !empty($triggers);
         }
         // Return consolidated information
-        return (object) [
+        $data = [
             'plugin_version' => $pluginVersion,
             'tables' => $tablesExist,
             'triggers' => $triggersExist
         ];
+        return json_decode(json_encode($data));
     }
 }
