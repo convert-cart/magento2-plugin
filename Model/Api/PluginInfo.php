@@ -63,7 +63,7 @@ class PluginInfo implements PluginInfoInterface
         $pluginVersion = isset($moduleInfo['setup_version']) ? $moduleInfo['setup_version'] : 'Unknown';
 
         // Check if required tables exist
-        $requiredTables = ['convertcart_sync_activity']; // Replace with your actual table names
+        $requiredTables = ['convertcart_sync_activity'];
         $existingTables = $this->connection->listTables();
 
         $tablesExist = [];
@@ -73,7 +73,12 @@ class PluginInfo implements PluginInfoInterface
         }
 
         // Check if required triggers exist
-        $requiredTriggers = ['update_cpe_after_insert_catalog_product_entity_decimal', 'update_cpe_after_update_catalog_product_entity_decimal', 'update_cpe_after_insert_catalog_inventory_stock_item', 'update_cpe_after_update_catalog_inventory_stock_item'];
+        $requiredTriggers = [
+            'update_cpe_after_insert_catalog_product_entity_decimal',
+            'update_cpe_after_update_catalog_product_entity_decimal',
+            'update_cpe_after_insert_catalog_inventory_stock_item',
+            'update_cpe_after_update_catalog_inventory_stock_item'
+        ];
         $triggersExist = [];
 
         $query = "SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()";
@@ -83,25 +88,19 @@ class PluginInfo implements PluginInfoInterface
             $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
         }
 
-        // Return consolidated information
-        $data = new stdClass();
+        // Ensure it is an associative array
+        $data = [
+            'plugin_info' => [
+                'version' => $pluginVersion,
+                'tables' => $tablesExist,
+                'triggers' => $triggersExist
+            ]
+        ];
 
-        $data->plugin_version = $pluginVersion;
-        $data->tables = $tablesExist;
-        $data->triggers = $triggersExist;
-
-        header('Content-Type: application/json');
-        $obj = new stdClass();
-        $obj->name = "John";
-        $obj->age = 30;
-        $obj->city = "New York";
-        $json = json_encode($obj);
-
+        // Logging for debugging
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
         $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
 
-        // Return the array directly instead of json_decode(json_encode())
-        echo $json;
-
+        return $data; // Magento will automatically convert this to JSON correctly
     }
 }
