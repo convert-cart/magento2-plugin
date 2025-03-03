@@ -65,19 +65,27 @@ class PluginInfo implements PluginInfoInterface
         }
 
         // Check if required triggers exist
-        $requiredTriggers = ['update_cpe_after_insert_catalog_product_entity_decimal', 'update_cpe_after_update_catalog_product_entity_decimal', 'update_cpe_after_insert_catalog_inventory_stock_item', 'update_cpe_after_update_catalog_inventory_stock_item']; // Replace with your actual trigger names
+        $requiredTriggers = ['update_cpe_after_insert_catalog_product_entity_decimal', 'update_cpe_after_update_catalog_product_entity_decimal', 'update_cpe_after_insert_catalog_inventory_stock_item', 'update_cpe_after_update_catalog_inventory_stock_item'];
         $triggersExist = [];
+
+        $query = "SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()";
+        $existingTriggers = $this->connection->fetchCol($query);
+
         foreach ($requiredTriggers as $trigger) {
-            $query = "SHOW TRIGGERS LIKE '{$trigger}'";
-            $triggers = $this->connection->fetchAll($query);
-            $triggersExist[$trigger] = !empty($triggers);
+            $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
         }
+
         // Return consolidated information
         $data = [
             'plugin_version' => $pluginVersion,
             'tables' => $tablesExist,
             'triggers' => $triggersExist
         ];
+
+        // Add this for debugging
+        error_log('existing trigger: ' . print_r($existingTriggers, true));
+        error_log('Plugin Info Data: ' . print_r($data, true));
+
         return json_decode(json_encode($data));
     }
 }
