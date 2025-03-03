@@ -89,10 +89,10 @@ class PluginInfo implements PluginInfoInterface
             'triggers' => $triggersExist
         ];
 
-        // Add this for debugging
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
         $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
 
-        return json_decode(json_encode($data));
+        // Return the array directly instead of json_decode(json_encode())
+        return json_encode($data);
     }
 }
