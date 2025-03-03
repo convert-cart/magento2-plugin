@@ -5,6 +5,7 @@ use Convertcart\Analytics\Api\PluginInfoInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use stdClass;
 
 class PluginInfo implements PluginInfoInterface
 {
@@ -83,16 +84,17 @@ class PluginInfo implements PluginInfoInterface
         }
 
         // Return consolidated information
-        $data = [
-            'plugin_version' => $pluginVersion,
-            'tables' => $tablesExist,
-            'triggers' => $triggersExist
-        ];
+        $data = new stdClass();
+
+        $data->plugin_version = $pluginVersion;
+        $data->tables = $tablesExist;
+        $data->triggers = $triggersExist;
+
 
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
         $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
 
         // Return the array directly instead of json_decode(json_encode())
-        return json_decode(json_encode($data));
+        return $data;
     }
 }
