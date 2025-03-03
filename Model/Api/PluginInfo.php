@@ -90,11 +90,18 @@ class PluginInfo implements PluginInfoInterface
         $data->tables = $tablesExist;
         $data->triggers = $triggersExist;
 
+        header('Content-Type: application/json');
+        $obj = new stdClass();
+        $obj->name = "John";
+        $obj->age = 30;
+        $obj->city = "New York";
+        $json = json_encode($obj);
 
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
         $this->logger->debug('Plugin Info Data: ' . print_r($data, true));
 
         // Return the array directly instead of json_decode(json_encode())
-        return $data;
+        echo $json;
+
     }
 }
