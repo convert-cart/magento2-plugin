@@ -75,10 +75,11 @@ class PluginInfo implements PluginInfoInterface
         $requiredTables = ['convertcart_sync_activity'];
         $existingTables = $this->connection->listTables();
 
-        $tablesExist = [];
+        // Create associative array with explicit string keys
+        $tablesExist = new \stdClass();
         foreach ($requiredTables as $table) {
             $tableName = $this->resourceConnection->getTableName($table);
-            $tablesExist[$table] = in_array($tableName, $existingTables);
+            $tablesExist->{$table} = in_array($tableName, $existingTables);
         }
 
         // Check if required triggers exist
@@ -88,20 +89,21 @@ class PluginInfo implements PluginInfoInterface
             'update_cpe_after_insert_catalog_inventory_stock_item',
             'update_cpe_after_update_catalog_inventory_stock_item'
         ];
-        $triggersExist = [];
 
         $query = "SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()";
         $existingTriggers = $this->connection->fetchCol($query);
 
+        // Create associative array with explicit string keys
+        $triggersExist = new \stdClass();
         foreach ($requiredTriggers as $trigger) {
-            $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
+            $triggersExist->{$trigger} = in_array($trigger, $existingTriggers);
         }
 
         /** @var \Convertcart\Analytics\Model\Data\PluginInfo $data */
         $data = $this->pluginInfoFactory->create();
         $data->setVersion($pluginVersion);
-        $data->setTables($tablesExist);
-        $data->setTriggers($triggersExist);
+        $data->setTables((array)$tablesExist);
+        $data->setTriggers((array)$triggersExist);
 
         // Logging for debugging
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
