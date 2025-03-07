@@ -27,14 +27,14 @@ interface PluginInfoInterface extends ExtensibleDataInterface
     /**
      * Get tables
      *
-     * @return \Magento\Framework\Api\ExtensionAttributesInterface[]|array
+     * @return array<string,bool>
      */
     public function getTables();
 
     /**
      * Set tables
      *
-     * @param array $tables
+     * @param array<string,bool> $tables
      * @return $this
      */
     public function setTables($tables);
@@ -42,14 +42,14 @@ interface PluginInfoInterface extends ExtensibleDataInterface
     /**
      * Get triggers
      *
-     * @return \Magento\Framework\Api\ExtensionAttributesInterface[]|array
+     * @return array<string,bool>
      */
     public function getTriggers();
 
     /**
      * Set triggers
      *
-     * @param array $triggers
+     * @param array<string,bool> $triggers
      * @return $this
      */
     public function setTriggers($triggers);
