@@ -1,80 +1,50 @@
 <?php
 namespace Convertcart\Analytics\Model\Data;
 
-use Convertcart\Analytics\Api\Data\PluginInfoInterface;
-use Magento\Framework\Model\AbstractExtensibleModel;
+use Magento\Framework\DataObject;
 
-class PluginInfo extends AbstractExtensibleModel implements PluginInfoInterface, \JsonSerializable
+class PluginInfo extends DataObject
 {
-    /**
-     * @inheritDoc
-     */
-    public function getVersion()
+    private $version;
+    private $tables;
+    private $triggers;
+
+    public function getVersion(): string
     {
-        return $this->getData(self::VERSION);
+        return $this->version;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setVersion($version)
+    public function setVersion(string $version): void
     {
-        return $this->setData(self::VERSION, $version);
+        $this->version = $version;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getTables()
+    public function getTables(): array
     {
-        $tables = $this->getData(self::TABLES);
-        return is_array($tables) ? $tables : [];
+        return $this->tables;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setTables($tables)
+    public function setTables(array $tables): void
     {
-        return $this->setData(self::TABLES, $tables);
+        $this->tables = $tables;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getTriggers()
+    public function getTriggers(): array
     {
-        $triggers = $this->getData(self::TRIGGERS);
-        return is_array($triggers) ? $triggers : [];
+        return $this->triggers;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setTriggers($triggers)
+    public function setTriggers(array $triggers): void
     {
-        return $this->setData(self::TRIGGERS, $triggers);
+        $this->triggers = $triggers;
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     *
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return [
             'version' => $this->getVersion(),
-            'tables' => (object)$this->getTables(), // Cast to object to force JSON object notation
-            'triggers' => (object)$this->getTriggers() // Cast to object to force JSON object notation
+            'tables' => $this->getTables(),
+            'triggers' => $this->getTriggers()
         ];
     }
-
-    /**
-     * @inheritDoc
-     */
-    protected function _construct()
-    {
-        $this->_init(\Convertcart\Analytics\Model\ResourceModel\PluginInfo::class);
-    }
-} 
+}

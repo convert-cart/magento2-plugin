@@ -7,20 +7,18 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DataObject;
 use Convertcart\Analytics\Model\Data\PluginInfoFactory;
+use Convertcart\Analytics\Logger\Logger;
 
 class PluginInfo implements PluginInfoInterface
 {
     /**
      * @var ResourceConnection
      */
-
     protected $resourceConnection;
 
     /**
      * @var ModuleListInterface
      */
-
-
     protected $moduleList;
 
     /**
@@ -43,14 +41,14 @@ class PluginInfo implements PluginInfoInterface
      *
      * @param ResourceConnection $resourceConnection
      * @param ModuleListInterface $moduleList
+     * @param Logger $logger
      * @param PluginInfoFactory $pluginInfoFactory
      */
-
     public function __construct(
         ResourceConnection $resourceConnection,
         ModuleListInterface $moduleList,
-        \Convertcart\Analytics\Logger\Logger $logger,
-        \Convertcart\Analytics\Model\Data\PluginInfoFactory $pluginInfoFactory
+        Logger $logger,
+        PluginInfoFactory $pluginInfoFactory
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->moduleList = $moduleList;
@@ -62,7 +60,7 @@ class PluginInfo implements PluginInfoInterface
     /**
      * Get plugin information.
      *
-     * @return array
+     * @return \Convertcart\Analytics\Model\Data\PluginInfo
      */
     public function getPluginInfo()
     {
