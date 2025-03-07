@@ -1,9 +1,7 @@
 <?php
 namespace Convertcart\Analytics\Model\Data;
 
-use Magento\Framework\DataObject;
-
-class PluginInfo extends DataObject implements \JsonSerializable
+class PluginInfo implements \JsonSerializable
 {
     private $version;
     private $tables = [];
@@ -81,10 +79,13 @@ class PluginInfo extends DataObject implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        // Return only the fields we want, ignoring DataObject's properties
+        return array_filter([
             'version' => $this->getVersion(),
             'tables' => $this->getTables(),
             'triggers' => $this->getTriggers()
-        ];
+        ], function($value) {
+            return $value !== null;
+        });
     }
 }
