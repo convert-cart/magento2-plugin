@@ -62,7 +62,7 @@ class PluginInfo implements PluginInfoInterface
     /**
      * Get plugin information.
      *
-     * @return \Convertcart\Analytics\Api\Data\PluginInfoInterface
+     * @return array
      */
     public function getPluginInfo()
     {
@@ -101,16 +101,17 @@ class PluginInfo implements PluginInfoInterface
             $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
         }
 
-        /** @var \Convertcart\Analytics\Model\Data\PluginInfo $data */
-        $data = $this->pluginInfoFactory->create();
-        $data->setVersion($pluginVersion);
-        $data->setTables($tablesExist);
-        $data->setTriggers($triggersExist);
+        // Create a simple array structure that will be properly serialized
+        $result = [
+            'version' => $pluginVersion,
+            'tables' => (object)$tablesExist,
+            'triggers' => (object)$triggersExist
+        ];
 
         // Logging for debugging
         $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
-        $this->logger->debug('Plugin Info Data: ' . print_r($data->getData(), true));
+        $this->logger->debug('Plugin Info Data: ' . print_r($result, true));
 
-        return $data;
+        return $result;
     }
 }
