@@ -9,7 +9,7 @@
 	<route url="/V1/cc/plugin-info" method="GET">
 		<service class="Convertcart\Analytics\Api\PluginInfoInterface" method="getPluginInfo"/>
 		<resources>
-			<resource ref="anonymous"/>
+			<resource ref="Magento_Catalog::products"/>
 		</resources>
 	</route>
 </routes>
