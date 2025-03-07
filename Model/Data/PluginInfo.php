@@ -3,29 +3,51 @@ namespace Convertcart\Analytics\Model\Data;
 
 class PluginInfo implements \JsonSerializable
 {
-    private $version;
+    private $ccPluginVersion;
+    private $magentoVersion;
     private $tables = [];
     private $triggers = [];
 
     /**
-     * Get version
+     * Get Convert Cart plugin version
      *
      * @return string
      */
-    public function getVersion(): string
+    public function getCcPluginVersion(): string
     {
-        return $this->version;
+        return $this->ccPluginVersion;
     }
 
     /**
-     * Set version
+     * Set Convert Cart plugin version
      *
      * @param string $version
      * @return void
      */
-    public function setVersion(string $version): void
+    public function setCcPluginVersion(string $version): void
     {
-        $this->version = $version;
+        $this->ccPluginVersion = $version;
+    }
+
+    /**
+     * Get Magento version
+     *
+     * @return string
+     */
+    public function getMagentoVersion(): string
+    {
+        return $this->magentoVersion;
+    }
+
+    /**
+     * Set Magento version
+     *
+     * @param string $version
+     * @return void
+     */
+    public function setMagentoVersion(string $version): void
+    {
+        $this->magentoVersion = $version;
     }
 
     /**
@@ -75,13 +97,13 @@ class PluginInfo implements \JsonSerializable
     /**
      * Specify data which should be serialized to JSON
      *
-     * @return array{version: string, tables: string[], triggers: string[]}
+     * @return array{cc_plugin_version: string, magento_version: string, tables: string[], triggers: string[]}
      */
     public function jsonSerialize(): array
     {
-        // Return only the fields we want, ignoring DataObject's properties
         return array_filter([
-            'version' => $this->getVersion(),
+            'cc_plugin_version' => $this->getCcPluginVersion(),
+            'magento_version' => $this->getMagentoVersion(),
             'tables' => $this->getTables(),
             'triggers' => $this->getTriggers()
         ], function($value) {
