@@ -70,19 +70,18 @@ class PluginInfo implements PluginInfoInterface
         $moduleCode = 'Convertcart_Analytics';
         $moduleInfo = $this->moduleList->getOne($moduleCode);
         $pluginVersion = isset($moduleInfo['setup_version']) ? $moduleInfo['setup_version'] : 'Unknown';
-    
+
         // Check if required tables exist
         $requiredTables = ['convertcart_sync_activity'];
         $existingTables = $this->connection->listTables();
-    
-        // Create associative array with explicit keys
+
+        // Create associative array for tables
         $tablesExist = [];
         foreach ($requiredTables as $table) {
             $tableName = $this->resourceConnection->getTableName($table);
-            // Use the table name as the key
             $tablesExist[$table] = in_array($tableName, $existingTables);
         }
-    
+
         // Check if required triggers exist
         $requiredTriggers = [
             'update_cpe_after_insert_catalog_product_entity_decimal',
@@ -90,28 +89,27 @@ class PluginInfo implements PluginInfoInterface
             'update_cpe_after_insert_catalog_inventory_stock_item',
             'update_cpe_after_update_catalog_inventory_stock_item'
         ];
-    
+
         $query = "SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()";
         $existingTriggers = $this->connection->fetchCol($query);
-    
-        // Create associative array with explicit keys
+
+        // Create associative array for triggers
         $triggersExist = [];
         foreach ($requiredTriggers as $trigger) {
-            // Use the trigger name as the key
             $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
         }
-    
-        // Create a simple array structure that will be properly serialized
-        $result = [
-            'version' => $pluginVersion,
-            'tables' => $tablesExist,
-            'triggers' => $triggersExist
-        ];
-    
+
+        // Use PluginInfoFactory to create a PluginInfo object
+        /** @var \Convertcart\Analytics\Model\Data\PluginInfo $pluginInfo */
+        $pluginInfo = $this->pluginInfoFactory->create();
+        $pluginInfo->setVersion($pluginVersion);
+        $pluginInfo->setTables($tablesExist);
+        $pluginInfo->setTriggers($triggersExist);
+
         // Logging for debugging
-        $this->logger->debug('existing trigger: ' . print_r($existingTriggers, true));
-        $this->logger->debug('Plugin Info Data: ' . print_r($result, true));
-    
-        return $result;
+        $this->logger->debug('Existing triggers: ' . print_r($existingTriggers, true));
+        $this->logger->debug('Plugin Info Data: ' . json_encode($pluginInfo));
+
+        return $pluginInfo;
     }
 }
