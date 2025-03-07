@@ -1,9 +1,7 @@
 <?php
 namespace Convertcart\Analytics\Api\Data;
 
-use Magento\Framework\Api\ExtensibleDataInterface;
-
-interface PluginInfoInterface extends ExtensibleDataInterface
+interface PluginInfoInterface
 {
     const VERSION = 'version';
     const TABLES = 'tables';

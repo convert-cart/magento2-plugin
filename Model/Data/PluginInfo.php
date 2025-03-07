@@ -4,7 +4,7 @@ namespace Convertcart\Analytics\Model\Data;
 use Convertcart\Analytics\Api\Data\PluginInfoInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 
-class PluginInfo extends AbstractExtensibleModel implements PluginInfoInterface
+class PluginInfo extends AbstractExtensibleModel implements PluginInfoInterface, \JsonSerializable
 {
     /**
      * @inheritDoc
@@ -54,6 +54,20 @@ class PluginInfo extends AbstractExtensibleModel implements PluginInfoInterface
     public function setTriggers($triggers)
     {
         return $this->setData(self::TRIGGERS, $triggers);
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'version' => $this->getVersion(),
+            'tables' => (object)$this->getTables(), // Cast to object to force JSON object notation
+            'triggers' => (object)$this->getTriggers() // Cast to object to force JSON object notation
+        ];
     }
 
     /**
