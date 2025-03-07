@@ -23,6 +23,7 @@ class PluginInfo extends DataObject implements \JsonSerializable
      * Set version
      *
      * @param string $version
+     * @return void
      */
     public function setVersion(string $version): void
     {
@@ -32,7 +33,7 @@ class PluginInfo extends DataObject implements \JsonSerializable
     /**
      * Get tables
      *
-     * @return array
+     * @return string[]
      */
     public function getTables(): array
     {
@@ -42,7 +43,8 @@ class PluginInfo extends DataObject implements \JsonSerializable
     /**
      * Set tables
      *
-     * @param array $tables
+     * @param array<string,bool> $tables
+     * @return void
      */
     public function setTables(array $tables): void
     {
@@ -53,7 +55,7 @@ class PluginInfo extends DataObject implements \JsonSerializable
     /**
      * Get triggers
      *
-     * @return array
+     * @return string[]
      */
     public function getTriggers(): array
     {
@@ -63,7 +65,8 @@ class PluginInfo extends DataObject implements \JsonSerializable
     /**
      * Set triggers
      *
-     * @param array $triggers
+     * @param array<string,bool> $triggers
+     * @return void
      */
     public function setTriggers(array $triggers): void
     {
@@ -72,7 +75,9 @@ class PluginInfo extends DataObject implements \JsonSerializable
     }
 
     /**
-     * @return array
+     * Specify data which should be serialized to JSON
+     *
+     * @return array{version: string, tables: string[], triggers: string[]}
      */
     public function jsonSerialize(): array
     {
