@@ -3,11 +3,11 @@ namespace Convertcart\Analytics\Model\Data;
 
 use Magento\Framework\DataObject;
 
-class PluginInfo extends DataObject
+class PluginInfo extends DataObject implements \JsonSerializable
 {
     private $version;
-    private $tables;
-    private $triggers;
+    private $tables = [];
+    private $triggers = [];
 
     /**
      * Get version
@@ -23,7 +23,6 @@ class PluginInfo extends DataObject
      * Set version
      *
      * @param string $version
-     * @return $this
      */
     public function setVersion(string $version): void
     {
@@ -33,43 +32,43 @@ class PluginInfo extends DataObject
     /**
      * Get tables
      *
-     * @return array<string,bool>
+     * @return array
      */
     public function getTables(): array
     {
-        return $this->tables;
+        return array_keys($this->tables);
     }
 
     /**
      * Set tables
      *
-     * @param array<string,bool> $tables
-     * @return $this
+     * @param array $tables
      */
     public function setTables(array $tables): void
     {
-        $this->tables = $tables;
+        // Only store tables that exist (true values)
+        $this->tables = array_filter($tables);
     }
 
     /**
      * Get triggers
      *
-     * @return array<string,bool>
+     * @return array
      */
     public function getTriggers(): array
     {
-        return $this->triggers;
+        return array_keys($this->triggers);
     }
 
     /**
      * Set triggers
      *
-     * @param array<string,bool> $triggers
-     * @return $this
+     * @param array $triggers
      */
     public function setTriggers(array $triggers): void
     {
-        $this->triggers = $triggers;
+        // Only store triggers that exist (true values)
+        $this->triggers = array_filter($triggers);
     }
 
     /**
