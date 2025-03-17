@@ -21,6 +21,13 @@ set -e
 # Trap ERR signal to ensure cleanup runs even on unexpected errors
 trap 'handle_error "Unexpected error occurred"' ERR
 
+# Add a debug function
+debug() {
+    if [ "$DEBUG" = true ]; then
+        printf "${YELLOW}DEBUG: $1${NC}\n"
+    fi
+}
+
 # Function to handle errors (POSIX compliant)
 handle_error() {
     printf "${RED}Error occurred: %s${NC}\n" "$1"
@@ -74,12 +81,28 @@ cleanup() {
 
 # Function definitions
 check_remote_tag_exists() {
-    git fetch --tags
-    git ls-remote --tags origin | grep -q "refs/tags/$1"
+    printf "${YELLOW}Fetching tags from remote...${NC}\n"
+    git fetch --tags || return 1
+    
+    printf "${YELLOW}Checking if tag $1 exists...${NC}\n"
+    if git ls-remote --tags origin | grep -q "refs/tags/$1"; then
+        printf "${GREEN}Tag $1 found on remote${NC}\n"
+        return 0
+    else
+        printf "${YELLOW}Tag $1 not found on remote${NC}\n"
+        return 1
+    fi
 }
 
 get_tag_creation_date() {
-    git log -1 --format=%aD "$1" 2>/dev/null
+    printf "${YELLOW}Getting creation date for tag $1...${NC}\n"
+    local date=$(git log -1 --format=%aD "$1" 2>/dev/null)
+    if [ -z "$date" ]; then
+        printf "${YELLOW}Could not get creation date for tag $1${NC}\n"
+        echo "Unknown date"
+    else
+        echo "$date"
+    fi
 }
 
 confirm_tag_deletion() {
@@ -160,7 +183,11 @@ if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
     if check_remote_tag_exists "$MAIN_VERSION"; then
         printf "${YELLOW}Found existing production tag${NC}\n"
         creation_date=$(get_tag_creation_date "$MAIN_VERSION")
-        if confirm_tag_deletion "$MAIN_VERSION" "$creation_date"; then
+        printf "${YELLOW}Tag creation date: $creation_date${NC}\n"
+        
+        echo -n "${YELLOW}Tag '$MAIN_VERSION' already exists on remote (created on: $creation_date). \nDo you want to delete it and recreate it? (y/n): ${NC}"
+        read response
+        if [ "$response" = "y" ]; then
             printf "${YELLOW}Deleting existing production tag...${NC}\n"
             git tag -d "$MAIN_VERSION" || handle_error "Failed to delete existing production tag"
         else
