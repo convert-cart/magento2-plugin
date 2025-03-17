@@ -15,6 +15,9 @@ NC='\033[0m' # No Color
 # Exit the script if any command fails
 set -e
 
+# Trap ERR signal to ensure cleanup runs even on unexpected errors
+trap 'handle_error "Unexpected error occurred"' ERR
+
 # Function to handle errors (POSIX compliant)
 handle_error() {
     printf "${RED}Error occurred: %s${NC}\n" "$1"
@@ -145,15 +148,23 @@ fi
 
 printf "${YELLOW}Proceeding with version updates...${NC}\n"
 
+# After the version checks
+printf "${YELLOW}Starting version update process...${NC}\n"
+
 # Check for existing remote tags
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
+    printf "${YELLOW}Checking production tag...${NC}\n"
     if check_remote_tag_exists "$MAIN_VERSION"; then
+        printf "${YELLOW}Found existing production tag${NC}\n"
         creation_date=$(get_tag_creation_date "$MAIN_VERSION")
         if confirm_tag_deletion "$MAIN_VERSION" "$creation_date"; then
+            printf "${YELLOW}Deleting existing production tag...${NC}\n"
             git tag -d "$MAIN_VERSION" || handle_error "Failed to delete existing production tag"
         else
             printf "${GREEN}Skipping creation of production tag %s.${NC}\n" "$MAIN_VERSION"
         fi
+    else
+        printf "${YELLOW}No existing production tag found${NC}\n"
     fi
 fi
 
@@ -229,6 +240,3 @@ fi
 # Final cleanup: Checkout master and clean up the temporary branch
 cleanup
 printf "${GREEN}Tags processing completed.${NC}\n"
-
-# Trap ERR signal to ensure cleanup runs even on unexpected errors
-trap 'handle_error "Unexpected error occurred"' ERR
