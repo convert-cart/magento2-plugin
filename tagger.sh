@@ -91,7 +91,33 @@ if git show-ref --verify --quiet refs/heads/$BACKUP_BRANCH; then
 fi
 
 # Create a backup branch to prevent affecting master directly
-git checkout -b $BACKUP_BRANCH || handle_error "Failed to create temporary branch $BACKUP_BRANCH"
+printf "${YELLOW}Attempting to create backup branch...${NC}\n"
+if ! git checkout -b $BACKUP_BRANCH; then
+    handle_error "Failed to create temporary branch $BACKUP_BRANCH"
+fi
+printf "${GREEN}Successfully created and switched to backup branch${NC}\n"
+
+# Verify we're on the correct branch
+current_branch=$(git branch --show-current)
+if [ "$current_branch" != "$BACKUP_BRANCH" ]; then
+    handle_error "Failed to switch to backup branch. Current branch: $current_branch"
+fi
+
+# Check if files exist before proceeding
+printf "${YELLOW}Verifying required files...${NC}\n"
+for file in "composer.json" "etc/module.xml" "view/frontend/templates/init.phtml"; do
+    if [ ! -f "$file" ]; then
+        handle_error "Required file not found: $file"
+    fi
+    printf "${GREEN}Found required file: $file${NC}\n"
+done
+
+# Try to read composer.json to verify file access
+if ! cat composer.json > /dev/null 2>&1; then
+    handle_error "Cannot read composer.json file"
+fi
+
+printf "${YELLOW}Proceeding with version updates...${NC}\n"
 
 # Function to check if a tag exists on remote
 check_remote_tag_exists() {
