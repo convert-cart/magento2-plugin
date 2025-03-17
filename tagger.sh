@@ -96,9 +96,21 @@ check_remote_tag_exists() {
 
 get_tag_creation_date() {
     printf "${YELLOW}Getting creation date for tag $1...${NC}\n"
-    local date=$(git log -1 --format=%aD "$1" 2>/dev/null)
+    
+    # Try to get date from local tag first
+    local date=""
+    if check_local_tag_exists "$1"; then
+        date=$(git log -1 --format=%aD "$1" 2>/dev/null)
+    fi
+    
+    # If local date not found, try to get from remote
+    if [ -z "$date" ] && check_remote_tag_exists "$1"; then
+        # Fetch the tag first to get its info
+        git fetch origin tag "$1" 2>/dev/null
+        date=$(git log -1 --format=%aD "FETCH_HEAD" 2>/dev/null)
+    fi
+    
     if [ -z "$date" ]; then
-        printf "${YELLOW}Could not get creation date for tag $1${NC}\n"
         echo "Unknown date"
     else
         echo "$date"
@@ -119,6 +131,12 @@ check_file_exists() {
     if [ ! -f "$1" ]; then
         handle_error "File $1 not found!"
     fi
+}
+
+# Function to check if a tag exists locally
+check_local_tag_exists() {
+    git tag | grep -q "^$1$"
+    return $?
 }
 
 # Ensure version number is provided
@@ -180,21 +198,48 @@ printf "${YELLOW}Starting version update process...${NC}\n"
 # Check for existing remote tags
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
     printf "${YELLOW}Checking production tag...${NC}\n"
+    remote_tag_exists=false
+    local_tag_exists=false
+    
+    # Check remote tag
     if check_remote_tag_exists "$MAIN_VERSION"; then
-        printf "${YELLOW}Found existing production tag${NC}\n"
+        remote_tag_exists=true
+        printf "${YELLOW}Found existing production tag on remote${NC}\n"
+    else
+        printf "${YELLOW}No existing production tag found on remote${NC}\n"
+    fi
+    
+    # Check local tag
+    if check_local_tag_exists "$MAIN_VERSION"; then
+        local_tag_exists=true
+        printf "${YELLOW}Found existing production tag locally${NC}\n"
+    else
+        printf "${YELLOW}No existing production tag found locally${NC}\n"
+    fi
+    
+    # Handle tag deletion if needed
+    if $remote_tag_exists || $local_tag_exists; then
         creation_date=$(get_tag_creation_date "$MAIN_VERSION")
         printf "${YELLOW}Tag creation date: $creation_date${NC}\n"
         
-        echo -n "${YELLOW}Tag '$MAIN_VERSION' already exists on remote (created on: $creation_date). \nDo you want to delete it and recreate it? (y/n): ${NC}"
+        echo -n "${YELLOW}Tag '$MAIN_VERSION' already exists. Do you want to delete it and recreate it? (y/n): ${NC}"
         read response
         if [ "$response" = "y" ]; then
             printf "${YELLOW}Deleting existing production tag...${NC}\n"
-            git tag -d "$MAIN_VERSION" || handle_error "Failed to delete existing production tag"
+            
+            # Delete local tag if it exists
+            if $local_tag_exists; then
+                git tag -d "$MAIN_VERSION" || printf "${YELLOW}Warning: Failed to delete local tag${NC}\n"
+            fi
+            
+            # Delete remote tag if it exists
+            if $remote_tag_exists; then
+                printf "${YELLOW}Deleting remote tag...${NC}\n"
+                git push --delete origin "$MAIN_VERSION" || printf "${YELLOW}Warning: Failed to delete remote tag${NC}\n"
+            fi
         else
             printf "${GREEN}Skipping creation of production tag %s.${NC}\n" "$MAIN_VERSION"
         fi
-    else
-        printf "${YELLOW}No existing production tag found${NC}\n"
     fi
 fi
 
