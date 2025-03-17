@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make the script executable
+chmod +x tagger.sh
+
 # Variables
 BRANCH="master"
 MAIN_VERSION=$1
