@@ -118,7 +118,8 @@ get_tag_creation_date() {
 }
 
 confirm_tag_deletion() {
-    echo -n "${YELLOW}Tag '$1' already exists on remote (created on: $2). \nDo you want to delete it and recreate it? (y/n): ${NC}"
+    printf "${YELLOW}Tag '$1' already exists on remote (created on: $2).${NC}\n"
+    printf "${YELLOW}Do you want to delete it and recreate it? (y/n): ${NC}"
     read response
     if [ "$response" != "y" ]; then
         printf "${YELLOW}Keeping existing tag '%s'. Skipping creation...${NC}\n" "$1"
@@ -222,7 +223,8 @@ if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
         creation_date=$(get_tag_creation_date "$MAIN_VERSION")
         printf "${YELLOW}Tag creation date: $creation_date${NC}\n"
         
-        echo -n "${YELLOW}Tag '$MAIN_VERSION' already exists. Do you want to delete it and recreate it? (y/n): ${NC}"
+        printf "${YELLOW}Tag '$MAIN_VERSION' already exists.${NC}\n"
+        printf "${YELLOW}Do you want to delete it and recreate it? (y/n): ${NC}"
         read response
         if [ "$response" = "y" ]; then
             printf "${YELLOW}Deleting existing production tag...${NC}\n"
@@ -244,10 +246,47 @@ if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
 fi
 
 if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
+    printf "${YELLOW}Checking beta tag...${NC}\n"
+    remote_tag_exists=false
+    local_tag_exists=false
+    
+    # Check remote tag
     if check_remote_tag_exists "$BETA_VERSION"; then
+        remote_tag_exists=true
+        printf "${YELLOW}Found existing beta tag on remote${NC}\n"
+    else
+        printf "${YELLOW}No existing beta tag found on remote${NC}\n"
+    fi
+    
+    # Check local tag
+    if check_local_tag_exists "$BETA_VERSION"; then
+        local_tag_exists=true
+        printf "${YELLOW}Found existing beta tag locally${NC}\n"
+    else
+        printf "${YELLOW}No existing beta tag found locally${NC}\n"
+    fi
+    
+    # Handle tag deletion if needed
+    if $remote_tag_exists || $local_tag_exists; then
         creation_date=$(get_tag_creation_date "$BETA_VERSION")
-        if confirm_tag_deletion "$BETA_VERSION" "$creation_date"; then
-            git tag -d "$BETA_VERSION" || handle_error "Failed to delete existing beta tag"
+        printf "${YELLOW}Tag creation date: $creation_date${NC}\n"
+        
+        printf "${YELLOW}Tag '$BETA_VERSION' already exists.${NC}\n"
+        printf "${YELLOW}Do you want to delete it and recreate it? (y/n): ${NC}"
+        read response
+        if [ "$response" = "y" ]; then
+            printf "${YELLOW}Deleting existing beta tag...${NC}\n"
+            
+            # Delete local tag if it exists
+            if $local_tag_exists; then
+                git tag -d "$BETA_VERSION" || printf "${YELLOW}Warning: Failed to delete local tag${NC}\n"
+            fi
+            
+            # Delete remote tag if it exists
+            if $remote_tag_exists; then
+                printf "${YELLOW}Deleting remote tag...${NC}\n"
+                git push --delete origin "$BETA_VERSION" || printf "${YELLOW}Warning: Failed to delete remote tag${NC}\n"
+            fi
         else
             printf "${GREEN}Skipping creation of beta tag %s.${NC}\n" "$BETA_VERSION"
         fi
