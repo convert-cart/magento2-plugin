@@ -24,18 +24,46 @@ handle_error() {
 
 # Cleanup function
 cleanup() {
+    # Save the current exit status
+    local exit_status=$?
+    
+    # Don't exit on errors during cleanup
+    set +e
+    
+    printf "${YELLOW}Performing cleanup...${NC}\n"
+    
     git reset .
+    if [ $? -ne 0 ]; then
+        printf "${RED}Failed to reset git changes: $?${NC}\n"
+    fi
+    
     git clean -fd .
+    if [ $? -ne 0 ]; then
+        printf "${RED}Failed to clean git directory: $?${NC}\n"
+    fi
+    
     git checkout .
+    if [ $? -ne 0 ]; then
+        printf "${RED}Failed to checkout changes: $?${NC}\n"
+    fi
 
     # Checkout master branch
     printf "${YELLOW}Checking out master branch during cleanup...${NC}\n"
-    git checkout $BRANCH || printf "${RED}Failed to checkout $BRANCH during cleanup.${NC}\n"
+    git checkout $BRANCH
+    if [ $? -ne 0 ]; then
+        printf "${RED}Failed to checkout $BRANCH during cleanup: $?${NC}\n"
+    fi
 
     # Delete the temporary branch if it exists
     if git show-ref --verify --quiet refs/heads/$BACKUP_BRANCH; then
-        git branch -D $BACKUP_BRANCH || printf "${RED}Failed to delete temporary branch $BACKUP_BRANCH.${NC}\n"
+        git branch -D $BACKUP_BRANCH
+        if [ $? -ne 0 ]; then
+            printf "${RED}Failed to delete temporary branch $BACKUP_BRANCH: $?${NC}\n"
+        fi
     fi
+    
+    # Restore the exit status
+    return $exit_status
 }
 
 # Ensure version number is provided
@@ -110,13 +138,29 @@ if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
     fi
 fi
 
+# Function to check if file exists
+check_file_exists() {
+    if [ ! -f "$1" ]; then
+        handle_error "File $1 not found!"
+    fi
+}
+
+# Check if required files exist before proceeding
+check_file_exists "composer.json"
+check_file_exists "etc/module.xml"
+check_file_exists "view/frontend/templates/init.phtml"
+
 # Update version in composer.json
 printf "${YELLOW}Updating composer.json with version %s...${NC}\n" "$MAIN_VERSION"
-sed -i "s/\"version\": \".*\"/\"version\": \"$MAIN_VERSION\"/" composer.json || handle_error "Failed to update composer.json"
+if ! sed -i "s/\"version\": \".*\"/\"version\": \"$MAIN_VERSION\"/" composer.json; then
+    handle_error "Failed to update composer.json"
+fi
 
 # Update setup_version in module.xml
 printf "${YELLOW}Updating setup_version in module.xml...${NC}\n"
-sed -i "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.xml || handle_error "Failed to update module.xml"
+if ! sed -i "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.xml; then
+    handle_error "Failed to update module.xml"
+fi
 
 # Commit changes for production tag if chosen
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
@@ -136,7 +180,9 @@ sed -i "s/setup_version=\"$MAIN_VERSION\"/setup_version=\"$BETA_VERSION\"/" etc/
 
 # Modify domain in init.phtml for beta
 printf "${YELLOW}Updating domain in init.phtml for beta...${NC}\n"
-sed -i 's/cdn.convertcart.com/cdn-beta.convertcart.com/' view/frontend/templates/init.phtml || handle_error "Failed to update domain in init.phtml for beta"
+if ! sed -i 's/cdn\.convertcart\.com/cdn-beta.convertcart.com/' view/frontend/templates/init.phtml; then
+    handle_error "Failed to update domain in init.phtml for beta"
+fi
 
 # Commit changes for beta tag if chosen
 if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
@@ -160,3 +206,6 @@ fi
 # Final cleanup: Checkout master and clean up the temporary branch
 cleanup
 printf "${GREEN}Tags processing completed.${NC}\n"
+
+# Trap ERR signal to ensure cleanup runs even on unexpected errors
+trap 'handle_error "Unexpected error occurred"' ERR
