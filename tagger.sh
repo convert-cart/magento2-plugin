@@ -66,6 +66,32 @@ cleanup() {
     return $exit_status
 }
 
+# Function definitions
+check_remote_tag_exists() {
+    git fetch --tags
+    git ls-remote --tags origin | grep -q "refs/tags/$1"
+}
+
+get_tag_creation_date() {
+    git log -1 --format=%aD "$1" 2>/dev/null
+}
+
+confirm_tag_deletion() {
+    echo -n "${YELLOW}Tag '$1' already exists on remote (created on: $2). \nDo you want to delete it and recreate it? (y/n): ${NC}"
+    read response
+    if [ "$response" != "y" ]; then
+        printf "${YELLOW}Keeping existing tag '%s'. Skipping creation...${NC}\n" "$1"
+        return 1
+    fi
+    return 0
+}
+
+check_file_exists() {
+    if [ ! -f "$1" ]; then
+        handle_error "File $1 not found!"
+    fi
+}
+
 # Ensure version number is provided
 if [ -z "$MAIN_VERSION" ]; then
     handle_error "Please provide a version number. Usage: ./tagger.sh VERSION_NUMBER"
@@ -119,28 +145,6 @@ fi
 
 printf "${YELLOW}Proceeding with version updates...${NC}\n"
 
-# Function to check if a tag exists on remote
-check_remote_tag_exists() {
-    git fetch --tags
-    git ls-remote --tags origin | grep -q "refs/tags/$1"
-}
-
-# Function to get tag creation date from remote
-get_tag_creation_date() {
-    git log -1 --format=%aD "$1" 2>/dev/null
-}
-
-# Function to confirm tag deletion
-confirm_tag_deletion() {
-    echo -n "${YELLOW}Tag '$1' already exists on remote (created on: $2). \nDo you want to delete it and recreate it? (y/n): ${NC}"
-    read response
-    if [ "$response" != "y" ]; then
-        printf "${YELLOW}Keeping existing tag '%s'. Skipping creation...${NC}\n" "$1"
-        return 1
-    fi
-    return 0
-}
-
 # Check for existing remote tags
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
     if check_remote_tag_exists "$MAIN_VERSION"; then
@@ -163,13 +167,6 @@ if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
         fi
     fi
 fi
-
-# Function to check if file exists
-check_file_exists() {
-    if [ ! -f "$1" ]; then
-        handle_error "File $1 not found!"
-    fi
-}
 
 # Check if required files exist before proceeding
 check_file_exists "composer.json"
