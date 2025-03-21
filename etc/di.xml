@@ -23,4 +23,9 @@
             <argument name="resourceModel" xsi:type="string">Convertcart\Analytics\Model\ResourceModel\PluginInfo</argument>
         </arguments>
     </virtualType>
+    <type name="Magento\Catalog\Api\ProductRepositoryInterface">
+        <plugin name="convertcart_product_stock_plugin"
+            type="Convertcart\Analytics\Plugin\ProductRepositoryPlugin"
+            sortOrder="10" />
+    </type>
 </config>
