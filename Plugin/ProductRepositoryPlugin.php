@@ -5,28 +5,28 @@ namespace Convertcart\Analytics\Plugin;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
-use Magento\Framework\Api\SearchCriteriaBuilder; // ✅ Correct dependency
+use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory; // ✅ Correct factory for criteria
 use Psr\Log\LoggerInterface;
 
 class ProductRepositoryPlugin
 {
     protected $stockItemRepository;
-    protected $searchCriteriaBuilder;
+    protected $stockItemCriteriaFactory;
     protected $logger;
 
     public function __construct(
         StockItemRepositoryInterface $stockItemRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder, // ✅ Use SearchCriteriaBuilder
+        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory, // ✅ Use StockItemCriteriaInterfaceFactory
         LoggerInterface $logger
     ) {
         $this->stockItemRepository = $stockItemRepository;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
         $this->logger = $logger;
     }
 
     public function afterGetList(ProductRepositoryInterface $subject, ProductSearchResultsInterface $searchResults)
     {
-        $this->logger->info('ProductRepositoryPlugin::afterGetList - Start processing: 24mar');
+        $this->logger->info('ProductRepositoryPlugin::afterGetList - Start processing');
 
         $skus = [];
         foreach ($searchResults->getItems() as $product) {
@@ -37,16 +37,15 @@ class ProductRepositoryPlugin
             return $searchResults;
         }
 
-        $this->logger->info('Collected SKUs: 24mar: ' . implode(',', $skus));
+        $this->logger->info('Collected SKUs: ' . implode(',', $skus));
 
         try {
-            // ✅ Use SearchCriteriaBuilder to filter by SKU
-            $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter('sku', $skus, 'in') // ✅ Correct filter
-                ->create();
+            // ✅ Use StockItemCriteriaFactory instead of SearchCriteriaBuilder
+            $criteria = $this->stockItemCriteriaFactory->create();
+            $criteria->setSkus($skus); // ✅ Correct method for filtering stock items by SKU
 
-            // Fetch all stock data in one go
-            $stockItems = $this->stockItemRepository->getList($searchCriteria)->getItems();
+            // Fetch all stock data
+            $stockItems = $this->stockItemRepository->getList($criteria)->getItems();
 
             $stockData = [];
             foreach ($stockItems as $stockItem) {
