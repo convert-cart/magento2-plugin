@@ -3,51 +3,67 @@
 namespace Convertcart\Analytics\Plugin;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
-use Magento\CatalogInventory\Api\StockItemCriteriaInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
+use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
+use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
+use Psr\Log\LoggerInterface;
 
 class ProductRepositoryPlugin
 {
     protected $stockItemRepository;
-    protected $stockItemCriteria;
+    protected $stockItemCriteriaFactory;
+    protected $logger;
 
     public function __construct(
         StockItemRepositoryInterface $stockItemRepository,
-        StockItemCriteriaInterface $stockItemCriteria
+        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory,
+        LoggerInterface $logger
     ) {
         $this->stockItemRepository = $stockItemRepository;
-        $this->stockItemCriteria = $stockItemCriteria;
+        $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
+        $this->logger = $logger;
     }
 
     public function afterGetList(ProductRepositoryInterface $subject, ProductSearchResultsInterface $searchResults)
     {
-        $productSkus = [];
-
+        $skus = [];
         foreach ($searchResults->getItems() as $product) {
-            $productSkus[] = $product->getSku();
+            $skus[] = $product->getSku();
         }
 
-        if (!empty($productSkus)) {
-            // Fetch stock items in bulk
-            $criteria = $this->stockItemCriteria->setSkus($productSkus);
+        if (empty($skus)) {
+            return $searchResults;
+        }
+
+        try {
+            // Create StockItemCriteria
+            $criteria = $this->stockItemCriteriaFactory->create();
+            $criteria->setSkus($skus);
+
+            // Fetch all stock data in one go
             $stockItems = $this->stockItemRepository->getList($criteria)->getItems();
 
-            // Map stock data to products
             $stockData = [];
             foreach ($stockItems as $stockItem) {
-                $stockData[$stockItem->getSku()] = $stockItem;
+                $stockData[$stockItem->getSku()] = [
+                    'stock_qty' => $stockItem->getQty(),
+                    'is_in_stock' => $stockItem->getIsInStock(),
+                    'manage_stock' => $stockItem->getManageStock(),
+                    'backorders' => $stockItem->getBackorders(),
+                ];
             }
 
+            // Assign stock data to products
             foreach ($searchResults->getItems() as $product) {
-                if (isset($stockData[$product->getSku()])) {
-                    $stockItem = $stockData[$product->getSku()];
-                    $product->setData('stock_qty', $stockItem->getQty());
-                    $product->setData('is_in_stock', $stockItem->getIsInStock());
-                    $product->setData('manage_stock', $stockItem->getManageStock());
-                    $product->setData('backorders', $stockItem->getBackorders());
+                $sku = $product->getSku();
+                if (isset($stockData[$sku])) {
+                    $product->addData($stockData[$sku]);
                 }
             }
+
+            $this->logger->info("Stock data added for " . count($skus) . " products.");
+        } catch (\Exception $e) {
+            $this->logger->error("Error fetching stock data: " . $e->getMessage());
         }
 
         return $searchResults;
