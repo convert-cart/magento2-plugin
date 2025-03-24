@@ -55,16 +55,24 @@ class ProductRepositoryPlugin
                 $stockMap[$row['product_id']] = $row;
             }
 
+            
+
             // Assign stock data to products
             foreach ($products as $product) {
                 $productId = $product->getId();
+                $this->logger->info("processing prod: " . $productId);
                 if (isset($stockMap[$productId])) {
-                    $product->addData([
-                        'stock_qty' => $stockMap[$productId]['qty'],
-                        'is_in_stock' => $stockMap[$productId]['is_in_stock'],
-                        'manage_stock' => $stockMap[$productId]['manage_stock'],
-                        'backorders' => $stockMap[$productId]['backorders'],
-                    ]);
+                    $this->logger->info("adding ext prod: " . $productId);
+                    // $product->addData([
+                    //     'stock_qty' => $stockMap[$productId]['qty'],
+                    //     'is_in_stock' => $stockMap[$productId]['is_in_stock'],
+                    //     'manage_stock' => $stockMap[$productId]['manage_stock'],
+                    //     'backorders' => $stockMap[$productId]['backorders'],
+                    // ]);
+
+                    $extensionattributes = $product->getExtensionAttributes();
+                    $extensionattributes->setQty($stockMap[$productId]['qty']);
+                    $product->setExtensionAttributes($extensionattributes);
                 }
             }
 
