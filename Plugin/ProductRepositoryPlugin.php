@@ -70,9 +70,13 @@ class ProductRepositoryPlugin
                     //     'backorders' => $stockMap[$productId]['backorders'],
                     // ]);
 
-                    $extensionattributes = $product->getExtensionAttributes();
-                    $extensionattributes->setQty($stockMap[$productId]['qty']);
-                    $product->setExtensionAttributes($extensionattributes);
+                    $extensionAttributes = $product->getExtensionAttributes();
+                    $extensionAttributes->setQty($stockMap[$productId]['qty']);
+                    $extensionAttributes->setManageStock($stockMap[$productId]['manage_stock']);
+                    $extensionAttributes->setIsInStock($stockMap[$productId]['is_in_stock']);
+                    $extensionAttributes->setBackorders($stockMap[$productId]['backorders']);
+                    $product->setExtensionAttributes($extensionAttributes);
+
                 }
             }
 
