@@ -5,7 +5,7 @@ namespace Convertcart\Analytics\Plugin;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
-use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
+use Magento\CatalogInventory\Model\Stock\StockItemCriteriaFactory; // ✅ Correct Factory
 use Psr\Log\LoggerInterface;
 
 class ProductRepositoryPlugin
@@ -16,7 +16,7 @@ class ProductRepositoryPlugin
 
     public function __construct(
         StockItemRepositoryInterface $stockItemRepository,
-        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory,
+        StockItemCriteriaFactory $stockItemCriteriaFactory, // ✅ Correct type
         LoggerInterface $logger
     ) {
         $this->stockItemRepository = $stockItemRepository;
@@ -26,6 +26,8 @@ class ProductRepositoryPlugin
 
     public function afterGetList(ProductRepositoryInterface $subject, ProductSearchResultsInterface $searchResults)
     {
+        $this->logger->info('ProductRepositoryPlugin::afterGetList - Start processing: 24mar');
+
         $skus = [];
         foreach ($searchResults->getItems() as $product) {
             $skus[] = $product->getSku();
@@ -35,9 +37,17 @@ class ProductRepositoryPlugin
             return $searchResults;
         }
 
+        $this->logger->info('Collected SKUs: 24mar: ' . implode(',', $skus)); // ✅ Fixed variable name
+
         try {
-            // Create StockItemCriteria
+            // ✅ Ensure StockItemCriteria is correctly created
+            /** @var \Magento\CatalogInventory\Api\StockItemCriteriaInterface $criteria */
             $criteria = $this->stockItemCriteriaFactory->create();
+            
+            if (!$criteria instanceof \Magento\CatalogInventory\Api\StockItemCriteriaInterface) {
+                throw new \Exception("Invalid criteria object created.");
+            }
+
             $criteria->setSkus($skus);
 
             // Fetch all stock data in one go
