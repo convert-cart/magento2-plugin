@@ -4,28 +4,19 @@ namespace Convertcart\Analytics\Plugin;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
-use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
-use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
-use Magento\Framework\Api\FilterBuilder; // ✅ Correct way to apply filters
-use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\App\ResourceConnection;
 use Psr\Log\LoggerInterface;
 
 class ProductRepositoryPlugin
 {
-    protected $stockItemRepository;
-    protected $stockItemCriteriaFactory;
-    protected $filterBuilder;
+    protected $resourceConnection;
     protected $logger;
 
     public function __construct(
-        StockItemRepositoryInterface $stockItemRepository,
-        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory,
-        FilterBuilder $filterBuilder, // ✅ Inject FilterBuilder
+        ResourceConnection $resourceConnection,
         LoggerInterface $logger
     ) {
-        $this->stockItemRepository = $stockItemRepository;
-        $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
-        $this->filterBuilder = $filterBuilder;
+        $this->resourceConnection = $resourceConnection;
         $this->logger = $logger;
     }
 
@@ -33,8 +24,13 @@ class ProductRepositoryPlugin
     {
         $this->logger->info('ProductRepositoryPlugin::afterGetList - Start processing');
 
+        $products = $searchResults->getItems();
+        if (empty($products)) {
+            return $searchResults;
+        }
+
         $skus = [];
-        foreach ($searchResults->getItems() as $product) {
+        foreach ($products as $product) {
             $skus[] = $product->getSku();
         }
 
@@ -42,43 +38,37 @@ class ProductRepositoryPlugin
             return $searchResults;
         }
 
-        $this->logger->info('Collected SKUs: ' . implode(',', $skus));
-
         try {
-            // ✅ Use StockItemCriteriaFactory correctly
-            $criteria = $this->stockItemCriteriaFactory->create();
+            $connection = $this->resourceConnection->getConnection();
+            $tableName = $connection->getTableName('cataloginventory_stock_item');
 
-            // ✅ Create filter to search for multiple SKUs
-            $filter = $this->filterBuilder
-                ->setField('sku')
-                ->setValue($skus)
-                ->setConditionType('in')
-                ->create();
+            // Fetch stock data for all SKUs in a single query
+            $query = $connection->select()
+                ->from($tableName, ['product_id', 'qty', 'is_in_stock', 'manage_stock', 'backorders'])
+                ->where('product_id IN (?)', array_map(fn($p) => $p->getId(), $products));
 
-            $criteria->setFilters([$filter]); // ✅ Correct way to set filters
+            $stockData = $connection->fetchAll($query);
 
-            // Fetch all stock data
-            $stockItems = $this->stockItemRepository->getList($criteria)->getItems();
-
-            $stockData = [];
-            foreach ($stockItems as $stockItem) {
-                $stockData[$stockItem->getSku()] = [
-                    'stock_qty' => $stockItem->getQty(),
-                    'is_in_stock' => $stockItem->getIsInStock(),
-                    'manage_stock' => $stockItem->getManageStock(),
-                    'backorders' => $stockItem->getBackorders(),
-                ];
+            // Map stock data by product ID
+            $stockMap = [];
+            foreach ($stockData as $row) {
+                $stockMap[$row['product_id']] = $row;
             }
 
             // Assign stock data to products
-            foreach ($searchResults->getItems() as $product) {
-                $sku = $product->getSku();
-                if (isset($stockData[$sku])) {
-                    $product->addData($stockData[$sku]);
+            foreach ($products as $product) {
+                $productId = $product->getId();
+                if (isset($stockMap[$productId])) {
+                    $product->addData([
+                        'stock_qty' => $stockMap[$productId]['qty'],
+                        'is_in_stock' => $stockMap[$productId]['is_in_stock'],
+                        'manage_stock' => $stockMap[$productId]['manage_stock'],
+                        'backorders' => $stockMap[$productId]['backorders'],
+                    ]);
                 }
             }
 
-            $this->logger->info("Stock data added for " . count($skus) . " products.");
+            $this->logger->info("Stock data added for " . count($products) . " products.");
         } catch (\Exception $e) {
             $this->logger->error("Error fetching stock data: " . $e->getMessage());
         }
