@@ -5,22 +5,27 @@ namespace Convertcart\Analytics\Plugin;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
-use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory; // ✅ Correct factory for criteria
+use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
+use Magento\Framework\Api\FilterBuilder; // ✅ Correct way to apply filters
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Psr\Log\LoggerInterface;
 
 class ProductRepositoryPlugin
 {
     protected $stockItemRepository;
     protected $stockItemCriteriaFactory;
+    protected $filterBuilder;
     protected $logger;
 
     public function __construct(
         StockItemRepositoryInterface $stockItemRepository,
-        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory, // ✅ Use StockItemCriteriaInterfaceFactory
+        StockItemCriteriaInterfaceFactory $stockItemCriteriaFactory,
+        FilterBuilder $filterBuilder, // ✅ Inject FilterBuilder
         LoggerInterface $logger
     ) {
         $this->stockItemRepository = $stockItemRepository;
         $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
+        $this->filterBuilder = $filterBuilder;
         $this->logger = $logger;
     }
 
@@ -40,9 +45,17 @@ class ProductRepositoryPlugin
         $this->logger->info('Collected SKUs: ' . implode(',', $skus));
 
         try {
-            // ✅ Use StockItemCriteriaFactory instead of SearchCriteriaBuilder
+            // ✅ Use StockItemCriteriaFactory correctly
             $criteria = $this->stockItemCriteriaFactory->create();
-            $criteria->setSkus($skus); // ✅ Correct method for filtering stock items by SKU
+
+            // ✅ Create filter to search for multiple SKUs
+            $filter = $this->filterBuilder
+                ->setField('sku')
+                ->setValue($skus)
+                ->setConditionType('in')
+                ->create();
+
+            $criteria->setFilters([$filter]); // ✅ Correct way to set filters
 
             // Fetch all stock data
             $stockItems = $this->stockItemRepository->getList($criteria)->getItems();
