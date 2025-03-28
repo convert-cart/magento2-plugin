@@ -111,6 +111,6 @@ Please contact [sales@convertcart.com](mailto:sales@convertcart.com) if any issu
 
 After making any changes to the master branch, you can create new version tags (for beta and production) by running the following command:
 
-      sh tagger.sh VERSION_NUMBER
+      bash tagger.sh VERSION_NUMBER
 
 Make sure to replace `VERSION_NUMBER` with the actual version number you want to create.
