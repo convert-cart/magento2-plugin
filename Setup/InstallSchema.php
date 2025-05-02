@@ -6,9 +6,17 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\InstallSchemaInterface;
+use Psr\Log\LoggerInterface;
 
 class InstallSchema implements InstallSchemaInterface
 {
+    protected $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Create table and triggers
      *
@@ -18,76 +26,91 @@ class InstallSchema implements InstallSchemaInterface
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
-        $conn = $setup->getConnection();
-        $tableName = $setup->getTable('convertcart_sync_activity');
 
-        if (!$conn->isTableExists($tableName)) {
-            $table = $conn->newTable($tableName)
-                ->addColumn(
-                    'id',
-                    Table::TYPE_INTEGER,
-                    null,
-                    ['unsigned' => true, 'nullable' => false, 'auto_increment' => true, 'primary' => true],
-                    'ID'
-                )
-                ->addColumn(
-                    'item_id',
-                    Table::TYPE_INTEGER,
-                    null,
-                    ['nullable' => false],
-                    'Item ID'
-                )
-                ->addColumn(
-                    'type',
-                    Table::TYPE_TEXT,
-                    55,
-                    ['nullable' => false],
-                    'Type'
-                )
-                ->addColumn(
-                    'created_at',
-                    Table::TYPE_TIMESTAMP,
-                    null,
-                    ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
-                    'Created At'
-                )
-                ->setComment('Convertcart Sync Activity Table')
-                ->setOption('charset', 'utf8');
-            
-            $conn->createTable($table);
+        try {
+            $conn = $setup->getConnection();
+            $tableName = $setup->getTable('convertcart_sync_activity');
+
+            $this->logger->info("Convertcart_Analytics: init table creation: {$tableName}");
+
+            if (!$conn->isTableExists($tableName)) {
+                $this->logger->info("Convertcart_Analytics: Creating table: {$tableName}");
+
+                $table = $conn->newTable($tableName)
+                    ->addColumn(
+                        'id',
+                        Table::TYPE_INTEGER,
+                        null,
+                        ['unsigned' => true, 'nullable' => false, 'auto_increment' => true, 'primary' => true],
+                        'ID'
+                    )
+                    ->addColumn(
+                        'item_id',
+                        Table::TYPE_INTEGER,
+                        null,
+                        ['nullable' => false],
+                        'Item ID'
+                    )
+                    ->addColumn(
+                        'type',
+                        Table::TYPE_TEXT,
+                        55,
+                        ['nullable' => false],
+                        'Type'
+                    )
+                    ->addColumn(
+                        'created_at',
+                        Table::TYPE_TIMESTAMP,
+                        null,
+                        ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
+                        'Created At'
+                    )
+                    ->setComment('Convertcart Sync Activity Table')
+                    ->setOption('charset', 'utf8');
+
+
+                $conn->createTable($table);
+
+                $this->logger->info("Convertcart_Analytics: Table created successfully.");
+            } else {
+                $this->logger->info("Convertcart_Analytics: Table already exists.");
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Convertcart_Analytics: Error during schema install - ' . $e->getMessage());
+            throw $e;
         }
 
         // 🔹 Create triggers safely
-        $triggers = [
-            'update_cpe_after_insert_catalog_product_entity_decimal' => "
-                CREATE TRIGGER IF NOT EXISTS update_cpe_after_insert_catalog_product_entity_decimal
-                AFTER INSERT ON {$setup->getTable('catalog_product_entity_decimal')}
-                FOR EACH ROW
-                BEGIN
-                    UPDATE {$setup->getTable('catalog_product_entity')}
-                    SET updated_at = NOW()
-                    WHERE entity_id = NEW.entity_id;
-                END;
-            ",
-            'update_cpe_after_update_catalog_product_entity_decimal' => "
-                CREATE TRIGGER IF NOT EXISTS update_cpe_after_update_catalog_product_entity_decimal
-                AFTER UPDATE ON {$setup->getTable('catalog_product_entity_decimal')}
-                FOR EACH ROW
-                BEGIN
-                    UPDATE {$setup->getTable('catalog_product_entity')}
-                    SET updated_at = NOW()
-                    WHERE entity_id = NEW.entity_id;
-                END;
-            "
-        ];
+        // $triggers = [
+        //     'update_cpe_after_insert_catalog_product_entity_decimal' => "
+        //         CREATE TRIGGER IF NOT EXISTS update_cpe_after_insert_catalog_product_entity_decimal
+        //         AFTER INSERT ON {$setup->getTable('catalog_product_entity_decimal')}
+        //         FOR EACH ROW
+        //         BEGIN
+        //             UPDATE {$setup->getTable('catalog_product_entity')}
+        //             SET updated_at = NOW()
+        //             WHERE entity_id = NEW.entity_id;
+        //         END;
+        //     ",
+        //     'update_cpe_after_update_catalog_product_entity_decimal' => "
+        //         CREATE TRIGGER IF NOT EXISTS update_cpe_after_update_catalog_product_entity_decimal
+        //         AFTER UPDATE ON {$setup->getTable('catalog_product_entity_decimal')}
+        //         FOR EACH ROW
+        //         BEGIN
+        //             UPDATE {$setup->getTable('catalog_product_entity')}
+        //             SET updated_at = NOW()
+        //             WHERE entity_id = NEW.entity_id;
+        //         END;
+        //     "
+        // ];
 
-        foreach ($triggers as $triggerName => $triggerSql) {
-            try {
-                $conn->query($triggerSql);
-            } catch (\Exception $e) {
-                throw new \RuntimeException("Error creating trigger $triggerName: " . $e->getMessage());
-            }
-        }
+        // foreach ($triggers as $triggerName => $triggerSql) {
+        //     try {
+        //         $conn->query($triggerSql);
+        //     } catch (\Exception $e) {
+        //         throw new \RuntimeException("Error creating trigger $triggerName: " . $e->getMessage());
+        //     }
+        // }
 
         $setup->endSetup();
     }
