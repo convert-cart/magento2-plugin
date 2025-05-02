@@ -22,6 +22,7 @@ class InstallSchema implements InstallSchemaInterface
      *
      * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
+     * @throws LocalizedException
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -30,8 +31,6 @@ class InstallSchema implements InstallSchemaInterface
         try {
             $conn = $setup->getConnection();
             $tableName = $setup->getTable('convertcart_sync_activity');
-
-            $this->logger->info("Convertcart_Analytics: init table creation: {$tableName}");
 
             if (!$conn->isTableExists($tableName)) {
                 $this->logger->info("Convertcart_Analytics: Creating table: {$tableName}");
@@ -68,50 +67,48 @@ class InstallSchema implements InstallSchemaInterface
                     ->setComment('Convertcart Sync Activity Table')
                     ->setOption('charset', 'utf8');
 
-
                 $conn->createTable($table);
-
                 $this->logger->info("Convertcart_Analytics: Table created successfully.");
             } else {
                 $this->logger->info("Convertcart_Analytics: Table already exists.");
             }
+
+            // 🔹 Create triggers safely
+            $triggers = [
+                'update_cpe_after_insert_catalog_product_entity_decimal' => "
+                CREATE TRIGGER IF NOT EXISTS update_cpe_after_insert_catalog_product_entity_decimal
+                AFTER INSERT ON {$setup->getTable('catalog_product_entity_decimal')}
+                FOR EACH ROW
+                BEGIN
+                    UPDATE {$setup->getTable('catalog_product_entity')}
+                    SET updated_at = NOW()
+                    WHERE entity_id = NEW.entity_id;
+                END;
+            ",
+                'update_cpe_after_update_catalog_product_entity_decimal' => "
+                CREATE TRIGGER IF NOT EXISTS update_cpe_after_update_catalog_product_entity_decimal
+                AFTER UPDATE ON {$setup->getTable('catalog_product_entity_decimal')}
+                FOR EACH ROW
+                BEGIN
+                    UPDATE {$setup->getTable('catalog_product_entity')}
+                    SET updated_at = NOW()
+                    WHERE entity_id = NEW.entity_id;
+                END;
+            "
+            ];
+
+            foreach ($triggers as $triggerName => $triggerSql) {
+                try {
+                    $conn->query($triggerSql);
+                } catch (\Exception $e) {
+                    throw new \RuntimeException("Error creating trigger $triggerName: " . $e->getMessage());
+                }
+            }
+
+            $setup->endSetup();
         } catch (\Exception $e) {
             $this->logger->error('Convertcart_Analytics: Error during schema install - ' . $e->getMessage());
             throw $e;
         }
-
-        // 🔹 Create triggers safely
-        // $triggers = [
-        //     'update_cpe_after_insert_catalog_product_entity_decimal' => "
-        //         CREATE TRIGGER IF NOT EXISTS update_cpe_after_insert_catalog_product_entity_decimal
-        //         AFTER INSERT ON {$setup->getTable('catalog_product_entity_decimal')}
-        //         FOR EACH ROW
-        //         BEGIN
-        //             UPDATE {$setup->getTable('catalog_product_entity')}
-        //             SET updated_at = NOW()
-        //             WHERE entity_id = NEW.entity_id;
-        //         END;
-        //     ",
-        //     'update_cpe_after_update_catalog_product_entity_decimal' => "
-        //         CREATE TRIGGER IF NOT EXISTS update_cpe_after_update_catalog_product_entity_decimal
-        //         AFTER UPDATE ON {$setup->getTable('catalog_product_entity_decimal')}
-        //         FOR EACH ROW
-        //         BEGIN
-        //             UPDATE {$setup->getTable('catalog_product_entity')}
-        //             SET updated_at = NOW()
-        //             WHERE entity_id = NEW.entity_id;
-        //         END;
-        //     "
-        // ];
-
-        // foreach ($triggers as $triggerName => $triggerSql) {
-        //     try {
-        //         $conn->query($triggerSql);
-        //     } catch (\Exception $e) {
-        //         throw new \RuntimeException("Error creating trigger $triggerName: " . $e->getMessage());
-        //     }
-        // }
-
-        $setup->endSetup();
     }
 }
