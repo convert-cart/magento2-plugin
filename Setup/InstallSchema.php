@@ -27,7 +27,7 @@ class InstallSchema implements InstallSchemaInterface
                     'id',
                     Table::TYPE_INTEGER,
                     null,
-                    ['unsigned' => true, 'nullable' => false, 'auto_increment' => true],
+                    ['unsigned' => true, 'nullable' => false, 'auto_increment' => true, 'primary' => true],
                     'ID'
                 )
                 ->addColumn(
@@ -54,7 +54,6 @@ class InstallSchema implements InstallSchemaInterface
                 ->setComment('Convertcart Sync Activity Table')
                 ->setOption('charset', 'utf8');
             
-            $table->setPrimaryKey(['id']); // Ensure proper primary key definition
             $conn->createTable($table);
         }
 
