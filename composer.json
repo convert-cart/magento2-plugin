@@ -1,47 +1,49 @@
 {
-    "name": "convert-cart/analytics",
-    "description": "Magento 2 plugin to integrate convertcart",
-    "type": "magento2-module",
-    "version": "1.0.8",
-    "license": [
-      "OSL-3.0",
-      "AFL-3.0"
-    ],
-    "require": {
-      "php": "~5.5.0|~5.6.0|^7.0|^8.0",
-      "magento/framework": "103.0.*"
-    },
-    "maintainers": [
-      {
-        "name": "Udhay kumar",
-        "email": "udhaya@convertcart.com",
-        "homepage": "https://www.convertcart.com/"
-      }
-    ],
-    "authors": [
-      {
-        "name": "Aamir",
-        "email": "aamir@convertcart.com",
-        "homepage": "https://www.convertcart.com/",
-        "role": "Developer"
-      },
-      {
-        "name": "Naveen SK",
-        "email": "naveena@convertcart.com",
-        "homepage": "https://www.convertcart.com/",
-        "role": "Developer"
-      },
-      {
-        "name": "Udhay kumar",
-        "email": "udhaya@convertcart.com",
-        "homepage": "https://www.convertcart.com/",
-        "role": "Developer"
-      }
-    ],
-    "autoload": {
-      "files": [ "registration.php" ],
-      "psr-4": {
-        "Convertcart\\Analytics\\": ""
-      }
+  "name": "convert-cart/analytics",
+  "description": "Magento 2 plugin to integrate convertcart",
+  "type": "magento2-module",
+  "version": "1.0.13",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "require": {
+    "php": "~5.5.0|~5.6.0|^7.0|^8.0",
+    "magento/framework": "103.0.*"
+  },
+  "maintainers": [
+    {
+      "name": "Udhay kumar",
+      "email": "udhaya@convertcart.com",
+      "homepage": "https://www.convertcart.com/"
     }
+  ],
+  "authors": [
+    {
+      "name": "Aamir",
+      "email": "aamir@convertcart.com",
+      "homepage": "https://www.convertcart.com/",
+      "role": "Developer"
+    },
+    {
+      "name": "Naveen SK",
+      "email": "naveena@convertcart.com",
+      "homepage": "https://www.convertcart.com/",
+      "role": "Developer"
+    },
+    {
+      "name": "Udhay kumar",
+      "email": "udhaya@convertcart.com",
+      "homepage": "https://www.convertcart.com/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Convertcart\\Analytics\\": ""
+    }
+  }
 }
