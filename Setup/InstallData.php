@@ -31,5 +31,6 @@ class InstallData implements InstallDataInterface
         // }
 
         $setup->endSetup();
+        $context->getVersion();
     }
 }

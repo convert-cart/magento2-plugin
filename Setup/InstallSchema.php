@@ -123,6 +123,8 @@ class InstallSchema implements InstallSchemaInterface
             }
 
             $setup->endSetup();
+            $version = $context->getVersion();
+            $this->logger->info("current ver: $version");
         } catch (\Exception $e) {
             $this->logger->error('Convertcart_Analytics: Error during schema install - ' . $e->getMessage());
             throw $e;
