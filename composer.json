@@ -1,47 +1,55 @@
 {
-    "name": "convert-cart/analytics",
-    "description": "Magento 2 plugin to integrate convertcart",
-    "type": "magento2-module",
-    "version": "1.0.12-p1",
-    "license": [
-      "OSL-3.0",
-      "AFL-3.0"
+  "name": "convert-cart/analytics",
+  "description": "Magento 2 plugin to integrate ConvertCart analytics",
+  "type": "magento2-module",
+  "version": "1.0.12",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "require": {
+    "php": "^7.0 || ^8.0",
+    "magento/framework": "^103.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "require": {
-      "php": "~5.5.0|~5.6.0|^7.0|^8.0",
-      "magento/framework": "103.0.*"
-    },
-    "maintainers": [
-      {
-        "name": "Udhay kumar",
-        "email": "udhaya@convertcart.com",
-        "homepage": "https://www.convertcart.com/"
-      }
-    ],
-    "authors": [
-      {
-        "name": "Aamir",
-        "email": "aamir@convertcart.com",
-        "homepage": "https://www.convertcart.com/",
-        "role": "Developer"
-      },
-      {
-        "name": "Naveen SK",
-        "email": "naveena@convertcart.com",
-        "homepage": "https://www.convertcart.com/",
-        "role": "Developer"
-      },
-      {
-        "name": "Udhay kumar",
-        "email": "udhaya@convertcart.com",
-        "homepage": "https://www.convertcart.com/",
-        "role": "Developer"
-      }
-    ],
-    "autoload": {
-      "files": [ "registration.php" ],
-      "psr-4": {
-        "Convertcart\\Analytics\\": ""
-      }
+    "psr-4": {
+      "Convertcart\\Analytics\\": ""
     }
+  },
+  "extra": {
+    "map": [
+      [
+        "*",
+        "Convertcart/Analytics"
+      ]
+    ]
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Aamir",
+      "email": "aamir@convertcart.com",
+      "homepage": "https://www.convertcart.com/",
+      "role": "Developer"
+    },
+    {
+      "name": "Naveen SK",
+      "email": "naveena@convertcart.com",
+      "homepage": "https://www.convertcart.com/",
+      "role": "Developer"
+    },
+    {
+      "name": "Udhay Kumar",
+      "email": "udhaya@convertcart.com",
+      "homepage": "https://www.convertcart.com/",
+      "role": "Developer"
+    }
+  ]
 }
