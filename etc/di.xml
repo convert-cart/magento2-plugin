@@ -7,7 +7,7 @@
     </type>
     <type name="Convertcart\Analytics\Logger\Logger">
         <arguments>
-            <argument name="name" xsi:type="string">myLoggerName</argument>
+            <argument name="name" xsi:type="string">convertcart</argument>
             <argument name="handlers" xsi:type="array">
                 <item name="system" xsi:type="object">Convertcart\Analytics\Logger\Handler</item>
             </argument>
