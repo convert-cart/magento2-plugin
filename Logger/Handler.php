@@ -9,7 +9,7 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
      * Logging level
      * @var int
      */
-    protected $loggerType = Logger::INFO;
+    protected $loggerType = Logger::DEBUG;
 
     /**
      * File name
