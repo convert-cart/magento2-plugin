@@ -312,6 +312,7 @@ fi
 
 # Commit changes for production tag if chosen
 if [ "$choice" = "1" ] || [ "$choice" = "3" ]; then
+    git status
     git add composer.json etc/module.xml || handle_error "Failed to add files for production commit"
     git commit -m "Release version $MAIN_VERSION" || handle_error "Failed to commit production changes"
     git tag -a "$MAIN_VERSION" -m "Version $MAIN_VERSION" || handle_error "Failed to create production tag"
@@ -334,6 +335,7 @@ fi
 
 # Commit changes for beta tag if chosen
 if [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
+    git status
     git add composer.json etc/module.xml view/frontend/templates/init.phtml || handle_error "Failed to add files for beta commit"
     git commit -m "Release beta version $BETA_VERSION" || handle_error "Failed to commit beta version"
     git tag -a "$BETA_VERSION" -m "Beta version $BETA_VERSION" || handle_error "Failed to create beta tag"
