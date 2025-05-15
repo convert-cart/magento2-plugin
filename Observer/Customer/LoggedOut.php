@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer\Customer;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -24,7 +26,12 @@ class LoggedOut implements ObserverInterface
         $this->_ccModel = $_ccModel;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * Execute observer for customer logged out event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $customer = $observer->getCustomer();

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Model\Api;
 
 use Convertcart\Analytics\Api\PluginInfoInterface;
@@ -69,9 +71,9 @@ class PluginInfo implements PluginInfoInterface
     /**
      * Get plugin information.
      *
-     * @return array
+     * @return \Convertcart\Analytics\Model\Data\PluginInfo
      */
-    public function getPluginInfo()
+    public function getPluginInfo(): \Convertcart\Analytics\Model\Data\PluginInfo
     {
         // Get Convert Cart plugin version
         $moduleCode = 'Convertcart_Analytics';

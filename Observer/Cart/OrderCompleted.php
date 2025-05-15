@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer\Cart;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -46,7 +48,12 @@ class OrderCompleted implements ObserverInterface
         $this->_logger = $_logger;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * Execute observer for order completed event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $orderIds = $observer->getData('order_ids');

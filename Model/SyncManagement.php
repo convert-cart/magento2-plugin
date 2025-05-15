@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Convertcart\Analytics\Model;
 
@@ -15,7 +16,11 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
         $this->_init(\Convertcart\Analytics\Model\ResourceModel\Sync::class);
     }
 
-    public function getIdentities()
+    /**
+     * Get cache identities.
+     * @return array
+     */
+    public function getIdentities(): array
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
@@ -25,7 +30,11 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return int
      */
-    public function getId()
+    /**
+     * Get ID.
+     * @return int|null
+     */
+    public function getId(): ?int
     {
         return $this->getData(self::ID);
     }
@@ -37,7 +46,12 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return SyncInterface
      */
-    public function setId($id)
+    /**
+     * Set ID.
+     * @param int $id
+     * @return SyncInterface
+     */
+    public function setId(int $id): SyncInterface
     {
         return $this->setData(self::ID, $id);
     }
@@ -47,7 +61,11 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return string
      */
-    public function getType()
+    /**
+     * Get TYPE.
+     * @return string|null
+     */
+    public function getType(): ?string
     {
         return $this->getData(self::TYPE);
     }
@@ -59,7 +77,12 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return SyncInterface
      */
-    public function setType($type)
+    /**
+     * Set type.
+     * @param string $type
+     * @return SyncInterface
+     */
+    public function setType(string $type): SyncInterface
     {
         return $this->setData(self::TYPE, $type);
     }
@@ -69,7 +92,11 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return string|null
      */
-    public function getItemId()
+    /**
+     * Get itemId.
+     * @return string|null
+     */
+    public function getItemId(): ?string
     {
         return $this->getData(self::ITEM_ID);
     }
@@ -81,7 +108,12 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return SyncInterface
      */
-    public function setItemId($itemId)
+    /**
+     * Set itemId.
+     * @param string $itemId
+     * @return SyncInterface
+     */
+    public function setItemId(string $itemId): SyncInterface
     {
         return $this->setData(self::ITEM_ID, $itemId);
     }
@@ -91,7 +123,11 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return string
      */
-    public function getCreatedAt()
+    /**
+     * Get createdAt.
+     * @return string|null
+     */
+    public function getCreatedAt(): ?string
     {
         return $this->getData(self::CREATED_AT);
     }
@@ -103,7 +139,12 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      *
      * @return SyncInterface
      */
-    public function setCreatedAt($createdAt)
+    /**
+     * Set createdAt.
+     * @param string $createdAt
+     * @return SyncInterface
+     */
+    public function setCreatedAt(string $createdAt): SyncInterface
     {
         return $this->setData(self::CREATED_AT, $createdAt);
     }

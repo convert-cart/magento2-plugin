@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -39,7 +41,12 @@ class AddScript implements ObserverInterface
         $this->_layout = $_layout;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * Execute observer to add init script and events.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $initScript = $this->_ccModel->getInitScript();
@@ -63,7 +70,12 @@ class AddScript implements ObserverInterface
         }
     }
 
-    private function attachEvents($head)
+    /**
+     * Attach event scripts to the head block.
+     * @param \Magento\Framework\View\Element\AbstractBlock|null $head
+     * @return void
+     */
+    private function attachEvents($head): void
     {
         if (!is_object($head)) {
             return;

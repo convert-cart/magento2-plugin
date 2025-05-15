@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Helper;
 
 use Magento\Framework\Module\ModuleListInterface;
@@ -25,7 +27,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-    public function getEventType($event)
+    /**
+     * Get the mapped event type for a given event name.
+     * @param string $event
+     * @return string
+     */
+    public function getEventType(string $event): string
     {
         $eventMap = [
             'homepageViewed'      =>  'homepageViewed',
@@ -53,33 +60,45 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
-    public function isEnabled()
+    /**
+     * Check if Convertcart Analytics is enabled.
+     * @return bool
+     */
+    public function isEnabled(): bool
     {
-        if ($this->getClientKey()) {
-            return 1;
-        } else {
-            return false;
-        }
+        return (bool)$this->getClientKey();
     }
 
-    public function getClientKey()
+    /**
+     * Get the configured client key.
+     * @return string|null
+     */
+    public function getClientKey(): ?string
     {
         $clientKey = $this->scopeConfig->getValue('convertcart/configuration/domainid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if (empty($clientKey)) {
-            return false;
+            return null;
         } else {
             return $clientKey;
         }
     }
 
-    public function getModuleVersion()
+    /**
+     * Get the module version from module list.
+     * @return string|null
+     */
+    public function getModuleVersion(): ?string
     {
-        $ccModule = $this->_moduleList
-            ->getOne('Convertcart_Analytics');
+        $ccModule = $this->_moduleList->getOne('Convertcart_Analytics');
         return !empty($ccModule['setup_version']) ? $ccModule['setup_version'] : null;
     }
 
-    public function sanitizeParam($param)
+    /**
+     * Sanitize a parameter by stripping tags.
+     * @param string|null $param
+     * @return string|null
+     */
+    public function sanitizeParam(?string $param): ?string
     {
         if ($param === null) {
             return null;

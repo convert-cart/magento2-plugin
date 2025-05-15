@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer;
 
 use Magento\Framework\Event\Observer;
@@ -27,7 +29,12 @@ class ProcessProductAfterDeleteEventObserver implements ObserverInterface
         $this->_deletedProduct = $deletedProduct;
     }
 
-    public function execute(Observer $observer)
+    /**
+     * Execute observer for product after delete event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $eventProduct = $observer->getEvent()->getProduct();

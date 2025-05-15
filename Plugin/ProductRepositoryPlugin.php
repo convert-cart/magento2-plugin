@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Convertcart\Analytics\Plugin;
 
@@ -9,9 +10,21 @@ use Psr\Log\LoggerInterface;
 
 class ProductRepositoryPlugin
 {
-    protected $resourceConnection;
-    protected $logger;
+    /**
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected ResourceConnection $resourceConnection;
 
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected LoggerInterface $logger;
+
+    /**
+     * ProductRepositoryPlugin constructor.
+     * @param ResourceConnection $resourceConnection
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         ResourceConnection $resourceConnection,
         LoggerInterface $logger
@@ -20,7 +33,16 @@ class ProductRepositoryPlugin
         $this->logger = $logger;
     }
 
-    public function afterGetList(ProductRepositoryInterface $subject, ProductSearchResultsInterface $searchResults)
+    /**
+     * Add stock data to product extension attributes after product list retrieval.
+     * @param ProductRepositoryInterface $subject
+     * @param ProductSearchResultsInterface $searchResults
+     * @return ProductSearchResultsInterface
+     */
+    public function afterGetList(
+        ProductRepositoryInterface $subject,
+        ProductSearchResultsInterface $searchResults
+    ): ProductSearchResultsInterface
     {
         $products = $searchResults->getItems();
         if (empty($products)) {

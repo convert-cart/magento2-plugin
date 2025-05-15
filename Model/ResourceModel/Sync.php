@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Convertcart\Analytics\Model\ResourceModel;
 
@@ -10,7 +10,11 @@ class Sync extends AbstractDb
     public const MAIN_TABLE = 'convertcart_sync_activity';
     public const ID_FIELD_NAME = 'id';
 
-    protected function _construct()
+    /**
+     * Resource model initialization.
+     * @return void
+     */
+    protected function _construct(): void
     {
         $this->_init(self::MAIN_TABLE, self::ID_FIELD_NAME);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
@@ -24,7 +25,12 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      *
      * @return int
      */
-    public function getId();
+    /**
+     * Get ID.
+     *
+     * @return int|null
+     */
+    public function getId(): ?int;
 
     /**
      * Set ID.
@@ -33,14 +39,25 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      *
      * @return $this
      */
-    public function setId($id);
+    /**
+     * Set ID.
+     *
+     * @param int $id
+     * @return self
+     */
+    public function setId(int $id): self;
 
     /**
      * Get type.
      *
      * @return string
      */
-    public function getType();
+    /**
+     * Get type.
+     *
+     * @return string|null
+     */
+    public function getType(): ?string;
  
     /**
      * Set type.
@@ -49,14 +66,25 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      *
      * @return $this
      */
-    public function setType($type);
+    /**
+     * Set type.
+     *
+     * @param string $type
+     * @return self
+     */
+    public function setType(string $type): self;
 
     /**
      * Get itemid.
      *
      * @return string
      */
-    public function getItemId();
+    /**
+     * Get itemId.
+     *
+     * @return string|null
+     */
+    public function getItemId(): ?string;
  
     /**
      * Set itemId.
@@ -65,14 +93,25 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      *
      * @return $this
      */
-    public function setItemId($itemId);
+    /**
+     * Set itemId.
+     *
+     * @param string $itemId
+     * @return self
+     */
+    public function setItemId(string $itemId): self;
   
     /**
      * Get createdAt.
      *
      * @return string
      */
-    public function getCreatedAt();
+    /**
+     * Get createdAt.
+     *
+     * @return string|null
+     */
+    public function getCreatedAt(): ?string;
  
     /**
      * Set createdAt.
@@ -81,5 +120,11 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
      *
      * @return $this
      */
-    public function setCreatedAt($createdAt);
+    /**
+     * Set createdAt.
+     *
+     * @param string $createdAt
+     * @return self
+     */
+    public function setCreatedAt(string $createdAt): self;
 }

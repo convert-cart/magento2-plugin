@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer;
 
 use Magento\Framework\Event\Observer;
@@ -27,7 +29,12 @@ class ProcessCategoryAfterDeleteEventObserver implements ObserverInterface
         $this->_deletedCategory = $deletedCategory;
     }
 
-    public function execute(Observer $observer)
+    /**
+     * Execute observer for category after delete event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $eventCategory = $observer->getEvent()->getCategory();

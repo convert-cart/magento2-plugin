@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer\Cart;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -40,7 +42,12 @@ class CartViewed implements ObserverInterface
         $this->_ccModel = $_ccModel;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * Execute observer for cart viewed event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $eventName  = 'cartViewed';

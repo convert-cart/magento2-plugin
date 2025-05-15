@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Convertcart\Analytics\Api;
 
 interface PluginInfoInterface
@@ -9,5 +10,11 @@ interface PluginInfoInterface
      * @api
      * @return \Convertcart\Analytics\Model\Data\PluginInfo
      */
-    public function getPluginInfo();
+    /**
+     * Get plugin information.
+     *
+     * @api
+     * @return \Convertcart\Analytics\Model\Data\PluginInfo
+     */
+    public function getPluginInfo(): \Convertcart\Analytics\Model\Data\PluginInfo;
 }

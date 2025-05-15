@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Model;
 
 use Magento\Framework\Session\SessionManagerInterface;
@@ -39,15 +41,19 @@ class Cc extends \Magento\Framework\Session\SessionManager
         $this->_dataHelper = $_dataHelper;
     }
 
-    public function getInitScript()
+    /**
+     * Get the initial script block if enabled.
+     * @return \Magento\Framework\View\Element\Template|null
+     */
+    public function getInitScript(): ?\Magento\Framework\View\Element\Template
     {
         if ($this->_dataHelper->isEnabled() == false) {
-            return;
+            return null;
         }
 
         $clientKey = $this->_dataHelper->getClientKey();
         if (empty($clientKey)) {
-            return;
+            return null;
         }
         $script = $this->_layout->createBlock('Convertcart\Analytics\Block\Script')
                 ->setTemplate('Convertcart_Analytics::init.phtml')
@@ -57,11 +63,17 @@ class Cc extends \Magento\Framework\Session\SessionManager
         return $script;
     }
 
-    public function getEventScript($eventData = [])
+    /**
+     * Get the event script block if enabled.
+     * @param array $eventData
+     * @return \Magento\Framework\View\Element\Template|null
+     */
+    public function getEventScript(array $eventData = []): ?\Magento\Framework\View\Element\Template
     {
         if ($this->_dataHelper->isEnabled() == false) {
-            return;
+            return null;
         }
+
         $script = $this->_layout->createBlock('Convertcart\Analytics\Block\Script')
         ->setTemplate('Convertcart_Analytics::event.phtml')
         ->assign([
@@ -70,7 +82,13 @@ class Cc extends \Magento\Framework\Session\SessionManager
         return $script;
     }
 
-    public function storeCcEvents($eventName, $eventData = [])
+    /**
+     * Store Convertcart events in session.
+     * @param string $eventName
+     * @param array $eventData
+     * @return void
+     */
+    public function storeCcEvents(string $eventName, array $eventData = []): void
     {
         if ($this->_dataHelper->isEnabled() == false) {
             return;
@@ -91,10 +109,14 @@ class Cc extends \Magento\Framework\Session\SessionManager
         $this->_fwSession->setCcEvents($ccEvents);
     }
 
-    public function fetchCcEvents()
+    /**
+     * Fetch and clear stored Convertcart events from session.
+     * @return array
+     */
+    public function fetchCcEvents(): array
     {
         if ($this->_dataHelper->isEnabled() == false) {
-            return;
+            return null;
         }
 
         $ccEvents = $this->_fwSession->getCcEvents();
@@ -106,7 +128,12 @@ class Cc extends \Magento\Framework\Session\SessionManager
         }
     }
 
-    public function addMetaData($eventData = [])
+    /**
+     * Add plugin metadata to event data.
+     * @param array $eventData
+     * @return array
+     */
+    public function addMetaData(array $eventData = []): array
     {
         $metaData = [];
         $metaData['plugin_version'] = $this->_dataHelper->getModuleVersion();
@@ -114,10 +141,16 @@ class Cc extends \Magento\Framework\Session\SessionManager
         return $eventData;
     }
 
-    public function getCartEventData($quote, $currency)
+    /**
+     * Get cart event data from quote object.
+     * @param \Magento\Quote\Model\Quote $quote
+     * @param string $currency
+     * @return array|null
+     */
+    public function getCartEventData($quote, string $currency): ?array
     {
         if (!is_object($quote)) {
-            return;
+            return null;
         }
         $cartItems = $quote->getAllVisibleItems();
         $eventData = [];
@@ -153,7 +186,12 @@ class Cc extends \Magento\Framework\Session\SessionManager
         return $eventData;
     }
 
-    public function getCartItemOptions($item)
+    /**
+     * Get custom options for a cart item.
+     * @param \Magento\Quote\Model\Quote\Item $item
+     * @return array|null
+     */
+    public function getCartItemOptions($item): ?array
     {
         if (!is_object($item)) {
             return null;
@@ -188,10 +226,15 @@ class Cc extends \Magento\Framework\Session\SessionManager
         return $customOptions;
     }
 
-    public function getCustomerData($customer)
+    /**
+     * Get customer data array from customer object.
+     * @param \Magento\Customer\Model\Customer $customer
+     * @return array|null
+     */
+    public function getCustomerData($customer): ?array
     {
         if (!is_object($customer)) {
-            return;
+            return null;
         }
         $customerData = [];
         $customerData['email'] = $customer->getEmail();

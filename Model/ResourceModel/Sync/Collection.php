@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Convertcart\Analytics\Model\ResourceModel\Sync;
 
@@ -9,7 +9,11 @@ use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 class Collection extends AbstractCollection
 {
-    public function _construct()
+    /**
+     * Collection initialization.
+     * @return void
+     */
+    protected function _construct(): void
     {
         $this->_init(Sync::class, SyncResourceModel::class);
     }

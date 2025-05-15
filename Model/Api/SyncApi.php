@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Convertcart\Analytics\Model\Api;
 
@@ -35,7 +36,14 @@ class SyncApi implements \Convertcart\Analytics\Api\SyncRepositoryInterface
      * @param int $id
      * @param string $type
      */
-    public function getDeletedProduct($limit, $id, $type)
+    /**
+     * Get deleted product data.
+     * @param int $limit
+     * @param int|null $id
+     * @param string $type
+     * @return array|null
+     */
+    public function getDeletedProduct(int $limit, ?int $id, string $type): ?array
     {
         try {
             // to delete the previous synced data ($id is last sync id);

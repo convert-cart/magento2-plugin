@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -32,7 +34,12 @@ class ProductsSearched implements ObserverInterface
         $this->_dataHelper = $_dataHelper;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * Execute observer for products searched event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $eventName = 'productsSearched';

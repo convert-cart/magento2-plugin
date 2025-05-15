@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Convertcart\Analytics\Api\Data;
 
 interface PluginInfoInterface
@@ -12,7 +13,12 @@ interface PluginInfoInterface
      *
      * @return string
      */
-    public function getVersion();
+    /**
+     * Get version
+     *
+     * @return string
+     */
+    public function getVersion(): string;
 
     /**
      * Set version
@@ -20,14 +26,25 @@ interface PluginInfoInterface
      * @param string $version
      * @return $this
      */
-    public function setVersion($version);
+    /**
+     * Set version
+     *
+     * @param string $version
+     * @return $this
+     */
+    public function setVersion(string $version): self;
 
     /**
      * Get tables
      *
      * @return array<string,bool>
      */
-    public function getTables();
+    /**
+     * Get tables
+     *
+     * @return array<string,bool>
+     */
+    public function getTables(): array;
 
     /**
      * Set tables
@@ -35,14 +52,25 @@ interface PluginInfoInterface
      * @param array<string,bool> $tables
      * @return $this
      */
-    public function setTables($tables);
+    /**
+     * Set tables
+     *
+     * @param array<string,bool> $tables
+     * @return $this
+     */
+    public function setTables(array $tables): self;
 
     /**
      * Get triggers
      *
      * @return array<string,bool>
      */
-    public function getTriggers();
+    /**
+     * Get triggers
+     *
+     * @return array<string,bool>
+     */
+    public function getTriggers(): array;
 
     /**
      * Set triggers
@@ -50,5 +78,12 @@ interface PluginInfoInterface
      * @param array<string,bool> $triggers
      * @return $this
      */
-    public function setTriggers($triggers);
-} 
+    /**
+     * Set triggers
+     *
+     * @param array<string,bool> $triggers
+     * @return $this
+     */
+    public function setTriggers(array $triggers): self;
+
+}

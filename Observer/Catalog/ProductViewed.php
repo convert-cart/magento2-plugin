@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer\Catalog;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -56,7 +58,12 @@ class ProductViewed implements ObserverInterface
         $this->_ccModel = $_ccModel;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * Execute observer for product viewed event.
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return void
+     */
+    public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
             $eventName = 'productViewed';

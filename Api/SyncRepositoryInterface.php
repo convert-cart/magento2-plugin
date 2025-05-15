@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Convertcart\Analytics\Api;
 
@@ -17,5 +18,16 @@ interface SyncRepositoryInterface
      *
      * @return array
      */
-    public function getDeletedProduct($limit, $id, $type);
+    /**
+     * Post Api data.
+     *
+     * @api
+     *
+     * @param int $limit
+     * @param int|null $id
+     * @param string $type
+     *
+     * @return array|null
+     */
+    public function getDeletedProduct(int $limit, ?int $id, string $type): ?array;
 }
