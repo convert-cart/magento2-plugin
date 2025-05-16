@@ -11,6 +11,6 @@ class InstallData implements InstallDataInterface
 {
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        // No data to install, but this ensures data_version is set in setup_module
+        $setup->getConnection();
     }
 }

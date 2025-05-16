@@ -11,6 +11,6 @@ class UpgradeData implements UpgradeDataInterface
 {
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        // No data upgrade needed, but this ensures data_version is set on upgrade
+        $setup->getConnection();
     }
 }
