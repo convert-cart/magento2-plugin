@@ -74,10 +74,12 @@ class Cc extends \Magento\Framework\Session\SessionManager
             return null;
         }
 
+        $clientKey = $this->_dataHelper->getClientKey();
         $script = $this->_layout->createBlock('Convertcart\Analytics\Block\Script')
         ->setTemplate('Convertcart_Analytics::event.phtml')
         ->assign([
-            'eventData' => json_encode($eventData)
+            'eventData' => json_encode($eventData),
+            'clientKey' => $clientKey
         ]);
         return $script;
     }
