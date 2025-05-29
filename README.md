@@ -109,6 +109,21 @@ Please contact [sales@convertcart.com](mailto:sales@convertcart.com) if any issu
 
 ## For Development
 
+### Code Quality: PHPCS and PHPCBF
+
+- **PHP_CodeSniffer (PHPCS):**
+  - Used to check your code for compliance with Magento 2 and PHP coding standards.
+  - Run `phpcs .` in the project root to see all coding standard violations and warnings.
+- **PHP Code Beautifier and Fixer (PHPCBF):**
+  - Used to automatically fix many coding standard violations found by PHPCS.
+  - Run `phpcbf .` in the project root to auto-fix fixable issues.
+
+> **Note:** PHPCS and PHPCBF are installed as development dependencies. If you do not have them globally, you can run them via Composer:
+> ```bash
+> ./vendor/bin/phpcs .
+> ./vendor/bin/phpcbf .
+> ```
+
 After making any changes to the master branch, you can create new version tags (for beta and production) by running the following command:
 
       bash tagger.sh VERSION_NUMBER
