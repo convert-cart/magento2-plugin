@@ -28,7 +28,8 @@ class HomepageViewed implements ObserverInterface
 
     /**
      * Execute observer for homepage viewed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void

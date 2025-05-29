@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Convertcart\Analytics\Setup;
 
 use Magento\Framework\Setup\SchemaSetupInterface;
@@ -11,31 +10,40 @@ use Psr\Log\LoggerInterface;
 
 class InstallSchema implements InstallSchemaInterface
 {
+    /**
+     * Logger instance
+     *
+     * @var LoggerInterface
+     */
     protected $logger;
-
-    public function __construct(LoggerInterface $logger)
-    {
+    /**
+     * InstallSchema constructor.
+     *
+     * @param LoggerInterface $logger Logger
+     */
+    public function __construct(
+        LoggerInterface $logger
+    ) {
         $this->logger = $logger;
     }
-
     /**
      * Create table and triggers
      *
-     * @param SchemaSetupInterface $setup
-     * @param ModuleContextInterface $context
+     * @param SchemaSetupInterface $setup Schema setup
+     * @param ModuleContextInterface $context Module context
+     *
+     * @return void
+     *
      * @throws LocalizedException
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
-
         try {
             $conn = $setup->getConnection();
             $tableName = $setup->getTable('convertcart_sync_activity');
-
             if (!$conn->isTableExists($tableName)) {
                 $this->logger->info("Convertcart_Analytics: Creating table: {$tableName}");
-
                 $table = $conn->newTable($tableName)
                     ->addColumn(
                         'id',
@@ -67,14 +75,12 @@ class InstallSchema implements InstallSchemaInterface
                     )
                     ->setComment('Convertcart Sync Activity Table')
                     ->setOption('charset', 'utf8');
-
                 $conn->createTable($table);
                 $this->logger->info("Convertcart_Analytics: Table created successfully.");
             } else {
                 $this->logger->info("Convertcart_Analytics: Table already exists.");
             }
 
-            // 🔹 Create triggers safely
             $triggers = [
                 'update_cpe_after_insert_catalog_product_entity_decimal' => "
                     CREATE TRIGGER update_cpe_after_insert_catalog_product_entity_decimal
@@ -106,14 +112,12 @@ class InstallSchema implements InstallSchemaInterface
                         WHERE entity_id = NEW.product_id;"
             ];
 
-            // Loop through each trigger
             foreach ($triggers as $triggerName => $triggerSql) {
                 $triggerExists = $conn->fetchOne(
                     "SELECT TRIGGER_NAME FROM information_schema.TRIGGERS 
                      WHERE TRIGGER_NAME = :trigger_name AND TRIGGER_SCHEMA = DATABASE()",
                     ['trigger_name' => $triggerName]
                 );
-
                 if (!$triggerExists) {
                     try {
                         $conn->query($triggerSql);
@@ -122,7 +126,6 @@ class InstallSchema implements InstallSchemaInterface
                     }
                 }
             }
-
             $setup->endSetup();
         } catch (\Exception $e) {
             $this->logger->error('Convertcart_Analytics: Error during schema install - ' . $e->getMessage());

@@ -12,12 +12,12 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
 
     protected function _construct()
     {
-        /* _init($resourceModel)  */
         $this->_init(\Convertcart\Analytics\Model\ResourceModel\Sync::class);
     }
 
     /**
      * Get cache identities.
+     *
      * @return array
      */
     public function getIdentities(): array
@@ -32,6 +32,7 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Get ID.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -48,7 +49,8 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Set ID.
-     * @param int $id
+     *
+     * @param  int $id
      * @return SyncInterface
      */
     public function setId(int $id): SyncInterface
@@ -63,6 +65,7 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Get TYPE.
+     *
      * @return string|null
      */
     public function getType(): ?string
@@ -79,7 +82,8 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Set type.
-     * @param string $type
+     *
+     * @param  string $type
      * @return SyncInterface
      */
     public function setType(string $type): SyncInterface
@@ -94,6 +98,7 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Get itemId.
+     *
      * @return string|null
      */
     public function getItemId(): ?string
@@ -110,7 +115,8 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Set itemId.
-     * @param string $itemId
+     *
+     * @param  string $itemId
      * @return SyncInterface
      */
     public function setItemId(string $itemId): SyncInterface
@@ -125,6 +131,7 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Get createdAt.
+     *
      * @return string|null
      */
     public function getCreatedAt(): ?string
@@ -141,7 +148,8 @@ class SyncManagement implements SyncInterface, \Magento\Framework\DataObject\Ide
      */
     /**
      * Set createdAt.
-     * @param string $createdAt
+     *
+     * @param  string $createdAt
      * @return SyncInterface
      */
     public function setCreatedAt(string $createdAt): SyncInterface

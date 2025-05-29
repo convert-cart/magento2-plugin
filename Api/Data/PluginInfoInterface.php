@@ -23,13 +23,13 @@ interface PluginInfoInterface
     /**
      * Set version
      *
-     * @param string $version
+     * @param  string $version
      * @return $this
      */
     /**
      * Set version
      *
-     * @param string $version
+     * @param  string $version
      * @return $this
      */
     public function setVersion(string $version): self;
@@ -49,13 +49,13 @@ interface PluginInfoInterface
     /**
      * Set tables
      *
-     * @param array<string,bool> $tables
+     * @param  array<string,bool> $tables
      * @return $this
      */
     /**
      * Set tables
      *
-     * @param array<string,bool> $tables
+     * @param  array<string,bool> $tables
      * @return $this
      */
     public function setTables(array $tables): self;
@@ -75,15 +75,14 @@ interface PluginInfoInterface
     /**
      * Set triggers
      *
-     * @param array<string,bool> $triggers
+     * @param  array<string,bool> $triggers
      * @return $this
      */
     /**
      * Set triggers
      *
-     * @param array<string,bool> $triggers
+     * @param  array<string,bool> $triggers
      * @return $this
      */
     public function setTriggers(array $triggers): self;
-
 }

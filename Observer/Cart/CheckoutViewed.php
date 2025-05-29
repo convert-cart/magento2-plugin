@@ -44,7 +44,8 @@ class CheckoutViewed implements ObserverInterface
 
     /**
      * Execute observer for checkout viewed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void

@@ -28,7 +28,8 @@ class ContentpageViewed implements ObserverInterface
 
     /**
      * Execute observer for content page viewed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void

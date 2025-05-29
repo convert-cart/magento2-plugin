@@ -23,9 +23,9 @@ interface SyncRepositoryInterface
      *
      * @api
      *
-     * @param int $limit
+     * @param int      $limit
      * @param int|null $id
-     * @param string $type
+     * @param string   $type
      *
      * @return array|null
      */

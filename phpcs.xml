@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="Magento2">
+    <description>Magento 2 Coding Standard with suppressed doc comment errors</description>
+    <rule ref="Magento2"/>
+    <exclude name="Generic.Files.DocComment.Missing"/>
+    <exclude name="Squiz.Classes.ClassFileName.Missing"/>
+    <exclude name="Squiz.Classes.ClassDeclaration.MissingDocComment"/>
+    <exclude-pattern>vendor/*</exclude-pattern>
+</ruleset>

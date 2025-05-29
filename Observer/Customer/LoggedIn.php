@@ -28,7 +28,8 @@ class LoggedIn implements ObserverInterface
 
     /**
      * Execute observer for customer logged in event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void

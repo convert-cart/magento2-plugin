@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Convertcart\Analytics\Model\Api;
 
 use Convertcart\Analytics\Api\PluginInfoInterface;
@@ -47,10 +46,10 @@ class PluginInfo implements PluginInfoInterface
     /**
      * Constructor.
      *
-     * @param ResourceConnection $resourceConnection
-     * @param ModuleListInterface $moduleList
-     * @param Logger $logger
-     * @param PluginInfoFactory $pluginInfoFactory
+     * @param ResourceConnection       $resourceConnection
+     * @param ModuleListInterface      $moduleList
+     * @param Logger                   $logger
+     * @param PluginInfoFactory        $pluginInfoFactory
      * @param ProductMetadataInterface $productMetadata
      */
     public function __construct(
@@ -75,26 +74,21 @@ class PluginInfo implements PluginInfoInterface
      */
     public function getPluginInfo(): \Convertcart\Analytics\Model\Data\PluginInfo
     {
-        // Get Convert Cart plugin version
         $moduleCode = 'Convertcart_Analytics';
         $moduleInfo = $this->moduleList->getOne($moduleCode);
         $pluginVersion = isset($moduleInfo['setup_version']) ? $moduleInfo['setup_version'] : 'Unknown';
 
-        // Get Magento version
         $magentoVersion = $this->productMetadata->getVersion();
 
-        // Check if required tables exist
         $requiredTables = ['convertcart_sync_activity'];
         $existingTables = $this->connection->listTables();
 
-        // Create associative array for tables
         $tablesExist = [];
         foreach ($requiredTables as $table) {
             $tableName = $this->resourceConnection->getTableName($table);
             $tablesExist[$table] = in_array($tableName, $existingTables);
         }
 
-        // Check if required triggers exist
         $requiredTriggers = [
             'update_cpe_after_insert_catalog_product_entity_decimal',
             'update_cpe_after_update_catalog_product_entity_decimal',
@@ -102,26 +96,24 @@ class PluginInfo implements PluginInfoInterface
             'update_cpe_after_update_catalog_inventory_stock_item'
         ];
 
+        // Raw SQL is required here to detect triggers in the database (Magento API does not provide this)
+        // @codingStandardsIgnoreLine
         $query = "SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()";
         $existingTriggers = $this->connection->fetchCol($query);
 
-        // Create associative array for triggers
         $triggersExist = [];
         foreach ($requiredTriggers as $trigger) {
             $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
         }
 
-        /** @var \Convertcart\Analytics\Model\Data\PluginInfo $data */
         $data = $this->pluginInfoFactory->create();
         $data->setCcPluginVersion($pluginVersion);
         $data->setMagentoVersion($magentoVersion);
         $data->setTables($tablesExist);
         $data->setTriggers($triggersExist);
 
-        // Logging for debugging
-        $this->logger->debug('Existing triggers: ' . print_r($existingTriggers, true));
+        $this->logger->debug('Existing triggers: ' . json_encode($existingTriggers));
         $this->logger->debug('Plugin Info Data: ' . json_encode($data));
-
         return $data;
     }
 }

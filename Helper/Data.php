@@ -9,27 +9,41 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
 
     /**
+     * Scope config interface instance.
+     *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $scopeConfig;
 
-    protected $_moduleList;
+    /**
+     * Module list interface instance.
+     *
+     * @var ModuleListInterface
+     */
+    protected $moduleList;
 
+    /**
+     * Constructor for the Helper Data class.
+     *
+     * @param \Magento\Framework\App\Helper\Context              $context     Helper context
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig Scope config
+     * @param ModuleListInterface                                $moduleList  Module list
+     */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         ModuleListInterface $moduleList
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->_moduleList = $moduleList;
-        parent::__construct(
-            $context
-        );
+        $this->moduleList = $moduleList;
+        parent::__construct($context);
     }
 
     /**
      * Get the mapped event type for a given event name.
-     * @param string $event
+     *
+     * @param string $event Event name
+     *
      * @return string
      */
     public function getEventType(string $event): string
@@ -62,6 +76,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Check if Convertcart Analytics is enabled.
+     *
      * @return bool
      */
     public function isEnabled(): bool
@@ -71,11 +86,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Get the configured client key.
+     *
      * @return string|null
      */
     public function getClientKey(): ?string
     {
-        $clientKey = $this->scopeConfig->getValue('convertcart/configuration/domainid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $clientKey = $this->scopeConfig->getValue(
+            'convertcart/configuration/domainid',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         if (empty($clientKey)) {
             return null;
         } else {
@@ -85,17 +104,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Get the module version from module list.
+     *
      * @return string|null
      */
     public function getModuleVersion(): ?string
     {
-        $ccModule = $this->_moduleList->getOne('Convertcart_Analytics');
+        $ccModule = $this->moduleList->getOne('Convertcart_Analytics');
         return !empty($ccModule['setup_version']) ? $ccModule['setup_version'] : null;
     }
 
     /**
      * Sanitize a parameter by stripping tags.
-     * @param string|null $param
+     *
+     * @param string|null $param Parameter to sanitize
+     *
      * @return string|null
      */
     public function sanitizeParam(?string $param): ?string
@@ -103,6 +125,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if ($param === null) {
             return null;
         }
-        return strip_tags($param);
+        $sanitized = strip_tags($param);
+        return $sanitized;
     }
 }

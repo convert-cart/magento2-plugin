@@ -1,9 +1,10 @@
 <?php
-$clientKey = htmlspecialchars($clientKey, ENT_QUOTES, 'UTF-8');
+$escaper = $block->getEscaper ? $block->getEscaper() : \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
+$clientKey = $escaper->escapeHtml($clientKey);
 ?>
 <!-- ConvertCart Event-->
 <script type='text/javascript' data-cfasync="false">
     window.ccLayer = window.ccLayer || [];
-    ccLayer.push(<?php echo $eventData; ?>);
+    ccLayer.push(<?= $escaper->escapeJs($eventData) ?>);
 </script>
 <!-- ConvertCart Event -->

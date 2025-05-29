@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Convertcart\Analytics\Observer\Cart;
 
 use Magento\Framework\Event\ObserverInterface;
@@ -18,24 +17,19 @@ class OrderCompleted implements ObserverInterface
      * @var \Convertcart\Analytics\Logger\Logger
      */
     protected $_logger;
-
     /**
      * @var \Convertcart\Analytics\Model\Cc
      */
     protected $_ccModel;
-
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
-
     /**
      * @var \Magento\Sales\Model\OrderFactory
      */
     protected $_salesOrderFactory;
-
     protected $_dataHelper;
-
     public function __construct(
         StoreManagerInterface $storeManager,
         OrderFactory $_salesOrderFactory,
@@ -47,10 +41,10 @@ class OrderCompleted implements ObserverInterface
         $this->_ccModel = $_ccModel;
         $this->_logger = $_logger;
     }
-
     /**
      * Execute observer for order completed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void
@@ -60,7 +54,6 @@ class OrderCompleted implements ObserverInterface
             if (!is_array($orderIds) || empty($orderIds[0])) {
                 return;
             }
-
             $eventData = [];
             $eventData['items'] = [];
             $store = $this->_storeManager->getStore();
@@ -69,7 +62,6 @@ class OrderCompleted implements ObserverInterface
             if (!is_object($order)) {
                 return;
             }
-
             foreach ($order->getAllVisibleItems() as $item) {
                 $orderItem = [];
                 $orderItem['name'] = str_replace("'", "", $item->getName());
@@ -78,14 +70,12 @@ class OrderCompleted implements ObserverInterface
                 $orderItem['quantity'] = $item->getQtyOrdered();
                 $orderItem['id'] = $item->getProductId();
                 $orderItem['sku'] = $item->getSku();
-
                 $product = $item->getProduct();
                 if (is_object($product)) {
                     $orderItem['url'] = $product->getProductUrl();
                 }
                 $eventData['items'][] = $orderItem;
             }
-
             $eventData['orderId'] = $order->getIncrementId();
             $eventData['order_email'] = $order->getCustomerEmail();
             $eventData['currency'] = $currency;
@@ -96,15 +86,6 @@ class OrderCompleted implements ObserverInterface
             $eventData['status'] = $order->getStatus();
             $eventData['currency'] = $currency;
             $eventData['total'] = $order->getGrandTotal();
-
-            // $ccData['event_data']['shipping_amount'] = $cc->getValue($order->getShippingAmount());
-            // $ccData['event_data']['tax_amount'] = $cc->getValue($order->getTaxAmount());
-            // $ccData['event_data']['discount_amount'] = $cc->getValue($order->getDiscountAmount());
-            // $ccView['event_data']['subtotal'] = $cc->getValue($order->getSubtotal());
-
-            // $ccData['event_data']['base_total'] = $cc->getValue($order->getBaseGrandTotal());
-            // $ccData['event_data']['total_due'] = $cc->getValue($order->getTotalDue());
-            // $ccData['event_data']['base_total_due'] = $cc->getValue($order->getBaseTotalDue());
 
             $eventName = 'orderCompleted';
             $this->_ccModel->storeCcEvents($eventName, $eventData);

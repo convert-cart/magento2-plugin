@@ -10,10 +10,12 @@ use Magento\Framework\DB\Ddl\Table;
 class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
 {
     /**
-     * Create table if not exists
+     * Upgrades the database schema for the Convertcart Analytics module.
      *
-     * @param SchemaSetupInterface $setup
-     * @param ModuleContextInterface $context
+     * @param SchemaSetupInterface   $setup   Schema setup
+     * @param ModuleContextInterface $context Module context
+     *
+     * @return void
      */
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
@@ -24,31 +26,31 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             if ($conn->isTableExists($tableName) != true) {
 
                 $table = $conn->newTable($tableName)
-                                ->addColumn(
-                                    'id',
-                                    Table::TYPE_INTEGER,
-                                    null,
-                                    ['unsigned'=>true,'nullable'=>false,'auto_increment' => true,'primary'=>true]
-                                )
-                                ->addColumn(
-                                    'item_id',
-                                    Table::TYPE_INTEGER,
-                                    null,
-                                    ['nullable'=>false]
-                                )
-                                ->addColumn(
-                                    'type',
-                                    Table::TYPE_TEXT,
-                                    55,
-                                    ['nullable'=>false]
-                                )
-                                ->addColumn(
-                                    'created_at',
-                                    Table::TYPE_TIMESTAMP,
-                                    null,
-                                    ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
-                                )
-                                ->setOption('charset', 'utf8');
+                    ->addColumn(
+                        'id',
+                        Table::TYPE_INTEGER,
+                        null,
+                        ['unsigned'=>true,'nullable'=>false,'auto_increment' => true,'primary'=>true]
+                    )
+                    ->addColumn(
+                        'item_id',
+                        Table::TYPE_INTEGER,
+                        null,
+                        ['nullable'=>false]
+                    )
+                    ->addColumn(
+                        'type',
+                        Table::TYPE_TEXT,
+                        55,
+                        ['nullable'=>false]
+                    )
+                    ->addColumn(
+                        'created_at',
+                        Table::TYPE_TIMESTAMP,
+                        null,
+                        ['nullable' => false, 'default' => Table::TIMESTAMP_INIT]
+                    )
+                    ->setOption('charset', 'utf8');
                 $conn->createTable($table);
             }
         }

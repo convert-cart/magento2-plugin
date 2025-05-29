@@ -44,7 +44,8 @@ class CartViewed implements ObserverInterface
 
     /**
      * Execute observer for cart viewed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void

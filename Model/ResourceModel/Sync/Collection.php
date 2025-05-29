@@ -11,6 +11,7 @@ class Collection extends AbstractCollection
 {
     /**
      * Collection initialization.
+     *
      * @return void
      */
     protected function _construct(): void

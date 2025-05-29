@@ -12,11 +12,11 @@ class PluginInfo extends AbstractDb
      */
     /**
      * Resource model initialization.
+     *
      * @return void
      */
     protected function _construct(): void
     {
-        // Define a dummy table and id field since we're not actually using the database
         $this->_init('dummy_table', 'entity_id');
     }
-} 
+}

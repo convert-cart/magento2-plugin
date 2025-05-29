@@ -36,7 +36,8 @@ class CategoryViewed implements ObserverInterface
 
     /**
      * Execute observer for category viewed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void

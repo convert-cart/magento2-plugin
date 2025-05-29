@@ -43,7 +43,8 @@ class AddScript implements ObserverInterface
 
     /**
      * Execute observer to add init script and events.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void
@@ -72,7 +73,8 @@ class AddScript implements ObserverInterface
 
     /**
      * Attach event scripts to the head block.
-     * @param \Magento\Framework\View\Element\AbstractBlock|null $head
+     *
+     * @param  \Magento\Framework\View\Element\AbstractBlock|null $head
      * @return void
      */
     private function attachEvents($head): void
@@ -81,7 +83,7 @@ class AddScript implements ObserverInterface
             return;
         }
         $ccEvents = $this->_ccModel->fetchCcEvents();
-        if (empty($ccEvents) or !is_array($ccEvents)) {
+        if (empty($ccEvents) || !is_array($ccEvents)) {
             return;
         }
         foreach ($ccEvents as $ccEvent) {
@@ -90,6 +92,3 @@ class AddScript implements ObserverInterface
         }
     }
 }
-
-
-

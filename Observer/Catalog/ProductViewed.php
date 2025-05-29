@@ -60,7 +60,8 @@ class ProductViewed implements ObserverInterface
 
     /**
      * Execute observer for product viewed event.
-     * @param \Magento\Framework\Event\Observer $observer
+     *
+     * @param  \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer): void
@@ -93,7 +94,7 @@ class ProductViewed implements ObserverInterface
                 if ($eventData['type'] == "configurable") {
                     $eventData['product_type'] = "parent";
                     $childProducts = $this->_configurableProductProductTypeConfigurableFactory->create()
-                                        ->getChildrenIds($product->getId());
+                        ->getChildrenIds($product->getId());
                     $eventData['child_ids'] = $childProducts[0];
                 } else {
                     $eventData['product_type'] = "simple";

@@ -23,7 +23,7 @@ class PluginInfo implements \JsonSerializable
     /**
      * Set Convert Cart plugin version
      *
-     * @param string $version
+     * @param  string $version
      * @return void
      */
     public function setCcPluginVersion(string $version): void
@@ -44,7 +44,7 @@ class PluginInfo implements \JsonSerializable
     /**
      * Set Magento version
      *
-     * @param string $version
+     * @param  string $version
      * @return void
      */
     public function setMagentoVersion(string $version): void
@@ -65,12 +65,12 @@ class PluginInfo implements \JsonSerializable
     /**
      * Set tables
      *
-     * @param array<string,bool> $tables
+     * @param  array<string,bool> $tables
      * @return void
      */
     public function setTables(array $tables): void
     {
-        // Only store tables that exist (true values)
+
         $this->tables = array_filter($tables);
     }
 
@@ -87,12 +87,12 @@ class PluginInfo implements \JsonSerializable
     /**
      * Set triggers
      *
-     * @param array<string,bool> $triggers
+     * @param  array<string,bool> $triggers
      * @return void
      */
     public function setTriggers(array $triggers): void
     {
-        // Only store triggers that exist (true values)
+
         $this->triggers = array_filter($triggers);
     }
 
@@ -103,13 +103,16 @@ class PluginInfo implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return array_filter([
-            'cc_plugin_version' => $this->getCcPluginVersion(),
-            'magento_version' => $this->getMagentoVersion(),
-            'tables' => $this->getTables(),
-            'triggers' => $this->getTriggers()
-        ], function($value) {
-            return $value !== null;
-        });
+        return array_filter(
+            [
+                'cc_plugin_version' => $this->getCcPluginVersion(),
+                'magento_version' => $this->getMagentoVersion(),
+                'tables' => $this->getTables(),
+                'triggers' => $this->getTriggers()
+            ],
+            function ($value) {
+                return $value !== null;
+            }
+        );
     }
 }

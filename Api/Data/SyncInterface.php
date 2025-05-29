@@ -8,12 +8,14 @@ namespace Convertcart\Analytics\Api\Data;
 
 /**
  * Interface SyncInterface
+ *
  * @api
  * @since 100.0.2
  */
 interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
-    /**#@+
+    /**
+     * #@+
      * Constants for keys of data array. Identical to the name of the getter in snake case
      */
     public const ID = 'id';
@@ -42,7 +44,7 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set ID.
      *
-     * @param int $id
+     * @param  int $id
      * @return self
      */
     public function setId(int $id): self;
@@ -69,7 +71,7 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set type.
      *
-     * @param string $type
+     * @param  string $type
      * @return self
      */
     public function setType(string $type): self;
@@ -96,7 +98,7 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set itemId.
      *
-     * @param string $itemId
+     * @param  string $itemId
      * @return self
      */
     public function setItemId(string $itemId): self;
@@ -123,7 +125,7 @@ interface SyncInterface extends \Magento\Framework\Api\ExtensibleDataInterface
     /**
      * Set createdAt.
      *
-     * @param string $createdAt
+     * @param  string $createdAt
      * @return self
      */
     public function setCreatedAt(string $createdAt): self;

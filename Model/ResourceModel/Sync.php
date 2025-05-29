@@ -12,6 +12,7 @@ class Sync extends AbstractDb
 
     /**
      * Resource model initialization.
+     *
      * @return void
      */
     protected function _construct(): void
