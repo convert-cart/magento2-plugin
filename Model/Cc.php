@@ -112,7 +112,7 @@ class Cc extends AbstractModel
         if (empty($clientKey)) {
             return null;
         }
-        $script = $this->_layout
+        $script = $this->getLayout()
             ->createBlock(\Convertcart\Analytics\Block\Script::class)
             ->setTemplate('Convertcart_Analytics::init.phtml')
             ->assign([
@@ -134,7 +134,7 @@ class Cc extends AbstractModel
         }
 
         $clientKey = $this->getDataHelper()->getClientKey();
-        $script = $this->_layout
+        $script = $this->getLayout()
             ->createBlock(\Convertcart\Analytics\Block\Script::class)
             ->setTemplate('Convertcart_Analytics::event.phtml')
             ->assign([
