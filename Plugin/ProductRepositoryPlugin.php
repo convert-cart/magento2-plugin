@@ -77,7 +77,9 @@ class ProductRepositoryPlugin
 
             $query = $connection->select()
                 ->from($tableName, ['product_id', 'qty', 'is_in_stock', 'manage_stock', 'backorders'])
-                ->where('product_id IN (?)', array_map(function($p) { return $p->getId(); }, $products));
+                ->where('product_id IN (?)', array_map(function ($p) {
+                    return $p->getId();
+                }, $products));
             $stockData = $connection->fetchAll($query);
 
             // check if inventory_source table exists then fetch the inventory source
