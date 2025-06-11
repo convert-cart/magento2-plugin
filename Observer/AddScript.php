@@ -20,11 +20,6 @@ class AddScript implements ObserverInterface
     protected $_logger;
 
     /**
-     * @var \Convertcart\Analytics\Model\Cc
-     */
-    protected $_ccModel;
-
-    /**
      * @var \Convertcart\Analytics\Helper\Data
      */
     protected $_dataHelper;
@@ -32,13 +27,35 @@ class AddScript implements ObserverInterface
     public function __construct(
         LayoutInterface $_layout,
         \Convertcart\Analytics\Logger\Logger $_logger,
-        \Convertcart\Analytics\Helper\Data $_dataHelper,
-        \Convertcart\Analytics\Model\Cc $_ccModel
+        \Convertcart\Analytics\Helper\Data $_dataHelper
     ) {
         $this->_dataHelper = $_dataHelper;
         $this->_logger = $_logger;
-        $this->_ccModel = $_ccModel;
         $this->_layout = $_layout;
+    }
+
+    /**
+     * Lazy-load the Cc model instance.
+     *
+     * @return \Convertcart\Analytics\Model\Cc
+     */
+    /**
+     * @var \Convertcart\Analytics\Model\Cc|null
+     */
+    protected $_ccModel = null;
+
+    /**
+     * Lazy-load the Cc model instance.
+     *
+     * @return \Convertcart\Analytics\Model\Cc
+     */
+    protected function getCcModel()
+    {
+        if ($this->_ccModel === null) {
+            $this->_ccModel = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Convertcart\Analytics\Model\Cc::class);
+        }
+        return $this->_ccModel;
     }
 
     /**
@@ -50,7 +67,7 @@ class AddScript implements ObserverInterface
     public function execute(\Magento\Framework\Event\Observer $observer): void
     {
         try {
-            $initScript = $this->_ccModel->getInitScript();
+            $initScript = $this->getCcModel()->getInitScript();
             if (empty($initScript)) {
                 return;
             }
@@ -82,12 +99,12 @@ class AddScript implements ObserverInterface
         if (!is_object($head)) {
             return;
         }
-        $ccEvents = $this->_ccModel->fetchCcEvents();
+        $ccEvents = $this->getCcModel()->fetchCcEvents();
         if (empty($ccEvents) || !is_array($ccEvents)) {
             return;
         }
         foreach ($ccEvents as $ccEvent) {
-            $eventBlock = $this->_ccModel->getEventScript($ccEvent);
+            $eventBlock = $this->getCcModel()->getEventScript($ccEvent);
             $head->append($eventBlock);
         }
     }
