@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="ConvertCart Magento2 Custom Rules">
+    <description>Custom rules for ConvertCart Magento2 plugin.</description>
+    <rule ref="Magento2">
+        <!-- Only suppress Magento2.Security.XssTemplate.FoundUnescaped for these templates -->
+        <exclude name="Magento2.Security.XssTemplate.FoundUnescaped" pattern="view/frontend/templates/init.phtml" />
+        <exclude name="Magento2.Security.XssTemplate.FoundUnescaped" pattern="view/frontend/templates/event.phtml" />
+    </rule>
+</ruleset>

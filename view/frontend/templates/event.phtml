@@ -7,17 +7,14 @@ if (is_callable([$block, 'getEscaper'])) {
 }
 if ($escaper) {
     $clientKey = $escaper->escapeHtml($clientKey);
+    $jsEventData = $escaper->escapeJs($eventData);
 } else {
-    $clientKey = htmlspecialchars($clientKey, ENT_QUOTES, 'UTF-8');
+    $jsEventData = json_encode($eventData);
 }
 ?>
 <!-- ConvertCart Event-->
 <script type='text/javascript' data-cfasync="false">
     window.ccLayer = window.ccLayer || [];
-    <?php if ($escaper): ?>
-    ccLayer.push(<?= $escaper->escapeJs($eventData) ?>);
-    <?php else: ?>
-    ccLayer.push(<?= $eventData ?>);
-    <?php endif; ?>
+    ccLayer.push(<?= $jsEventData ?>);
 </script>
 <!-- ConvertCart Event -->
