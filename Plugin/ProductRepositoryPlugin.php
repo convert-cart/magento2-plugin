@@ -80,7 +80,8 @@ class ProductRepositoryPlugin
                 ->where('product_id IN (?)', array_map(fn($p) => $p->getId(), $products));
             $stockData = $connection->fetchAll($query);
 
-            // check if inventory_source table exists then fetch the inventory source & check if multiple sources are enabled
+            // check if inventory_source table exists then fetch the inventory source
+            // and check if multiple sources are enabled
             $sourceTable = $connection->getTableName('inventory_source');
             $sourceItemTable = $connection->getTableName('inventory_source_item');
             $sourceExists = $connection->isTableExists($sourceTable);
@@ -120,7 +121,8 @@ class ProductRepositoryPlugin
                     if (!isset($msiStockMap[$sku][$sourceCode])) {
                         $msiStockMap[$sku][$sourceCode] = [];
                     }
-                    // Assuming quantity is the stock quantity, status is 1 for in stock, and manage_stock is always true
+                    // Assuming quantity is the stock quantity, status is 1 for in stock,
+                    // and manage_stock is always true
                     // Backorders are not considered in MSI, so setting it to 0
 
                     $msiStockMap[$sku][$sourceCode] = [

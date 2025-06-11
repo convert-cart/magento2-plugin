@@ -38,17 +38,13 @@ class Cc extends AbstractModel
     /**
      * Cc constructor.
      *
-     * @param \Magento\Framework\Model\Context::class                   $context      Model context
-     * @param \Magento\Framework\Registry                        $registry     Registry
      * @param \Magento\Framework\View\LayoutInterface            $layout       Layout interface
      * @param \Magento\Store\Model\StoreManagerInterface         $storeManager Store manager
      * @param \Convertcart\Analytics\Helper\Data                 $dataHelper   Data helper
      * @param \Magento\Framework\Session\SessionManagerInterface $fwSession    Session manager
-     * @param array                                              $data         Additional data
+     * @param array                                                $data         Additional data
      */
     public function __construct(
-        Context $context,
-        Registry $registry,
         LayoutInterface $layout,
         StoreManagerInterface $storeManager,
         \Convertcart\Analytics\Helper\Data $dataHelper,
@@ -59,7 +55,7 @@ class Cc extends AbstractModel
         $this->storeManager = $storeManager;
         $this->dataHelper = $dataHelper;
         $this->fwSession = $fwSession;
-        parent::__construct($context, $registry, $data);
+        parent::__construct();
     }
 
     /**
@@ -77,13 +73,12 @@ class Cc extends AbstractModel
         if (empty($clientKey)) {
             return null;
         }
-        $script = $this->_layout->createBlock(\Convertcart\Analytics\Block\Script::class)
+        $script = $this->_layout
+            ->createBlock(\Convertcart\Analytics\Block\Script::class)
             ->setTemplate('Convertcart_Analytics::init.phtml')
-            ->assign(
-                [
-                    'clientKey' => $clientKey
-                ]
-            );
+            ->assign([
+                'clientKey' => $clientKey
+            ]);
         return $script;
     }
 
