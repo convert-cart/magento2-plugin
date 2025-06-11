@@ -5,16 +5,11 @@ if (is_callable([$block, 'getEscaper'])) {
 } else {
     $escaper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
 }
-if ($escaper) {
-    $clientKey = $escaper->escapeHtml($clientKey);
-    $jsEventData = $escaper->escapeJs($eventData);
-} else {
-    $jsEventData = json_encode($eventData);
-}
+$jsEventData = json_encode($eventData);
 ?>
 <!-- ConvertCart Event-->
 <script type='text/javascript' data-cfasync="false">
     window.ccLayer = window.ccLayer || [];
-    ccLayer.push(<?= $jsEventData ?>);
+    ccLayer.push(JSON.parse(<?= $jsEventData ?>));
 </script>
 <!-- ConvertCart Event -->
