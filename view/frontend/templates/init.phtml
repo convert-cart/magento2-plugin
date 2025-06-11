@@ -1,6 +1,10 @@
 <?php
-$escaper = $block->getEscaper ? $block->getEscaper() : \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
-
+$escaper = null;
+if (method_exists($block, 'getEscaper')) {
+    $escaper = $block->getEscaper();
+} else {
+    $escaper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
+}
 ?>
 <!-- ConvertCart Initialization Started -->
 <script type="text/javascript">

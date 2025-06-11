@@ -1,4 +1,13 @@
 <?php
+/**
+ * Convertcart Analytics - CC Model
+ *
+ * Magento 2 model for handling Convertcart Analytics event/session logic.
+ *
+ * @category   Convertcart
+ * @package    Convertcart_Analytics
+ * @copyright  Copyright (c) Convertcart
+ */
 declare(strict_types=1);
 
 namespace Convertcart\Analytics\Model;
@@ -10,43 +19,31 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Cc model for Convertcart Analytics
- */
 class Cc extends AbstractModel
 {
     /**
-     * @var \Magento\Framework\View\LayoutInterface
+     * @var \Magento\Framework\View\LayoutInterface|null Layout block manager (lazily loaded)
      */
-    protected $layout;
+    protected $layout = null;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var \Magento\Store\Model\StoreManagerInterface|null Store manager (lazily loaded)
      */
-    protected $storeManager;
+    protected $storeManager = null;
 
     /**
-     * @var \Convertcart\Analytics\Helper\Data
+     * @var \Convertcart\Analytics\Helper\Data|null Analytics helper (lazily loaded)
      */
-    protected $dataHelper;
+    protected $dataHelper = null;
 
     /**
-     * @var \Magento\Framework\Session\SessionManagerInterface|null
+     * @var \Magento\Framework\Session\SessionManagerInterface|null Session manager (lazily loaded)
      */
     protected $fwSession = null;
 
     /**
-     * Standard Magento model constructor.
+     * Lazily load the LayoutInterface instance.
      *
-     * @param \Magento\Framework\Model\Context                   $context      Model context
-     * @param \Magento\Framework\Registry                         $registry     Registry
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource   Resource model
-     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection Resource collection
-     * @param array                                                $data         Additional data
-     */
-
-    /**
-     * Get LayoutInterface instance (lazy-load).
      * @return \Magento\Framework\View\LayoutInterface
      */
     protected function getLayout()
@@ -59,7 +56,8 @@ class Cc extends AbstractModel
     }
 
     /**
-     * Get StoreManagerInterface instance (lazy-load).
+     * Lazily load the StoreManagerInterface instance.
+     *
      * @return \Magento\Store\Model\StoreManagerInterface
      */
     protected function getStoreManager()
@@ -72,7 +70,8 @@ class Cc extends AbstractModel
     }
 
     /**
-     * Get DataHelper instance (lazy-load).
+     * Lazily load the Analytics DataHelper instance.
+     *
      * @return \Convertcart\Analytics\Helper\Data
      */
     protected function getDataHelper()
@@ -85,7 +84,8 @@ class Cc extends AbstractModel
     }
 
     /**
-     * Get SessionManagerInterface instance (lazy-load).
+     * Lazily load the SessionManagerInterface instance.
+     *
      * @return \Magento\Framework\Session\SessionManagerInterface
      */
     protected function getFwSession()
