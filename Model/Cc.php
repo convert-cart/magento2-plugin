@@ -31,31 +31,70 @@ class Cc extends AbstractModel
     protected $dataHelper;
 
     /**
-     * @var \Magento\Framework\Session\SessionManagerInterface
+     * @var \Magento\Framework\Session\SessionManagerInterface|null
      */
-    protected $fwSession;
+    protected $fwSession = null;
 
     /**
-     * Cc constructor.
+     * Standard Magento model constructor.
      *
-     * @param \Magento\Framework\View\LayoutInterface            $layout       Layout interface
-     * @param \Magento\Store\Model\StoreManagerInterface         $storeManager Store manager
-     * @param \Convertcart\Analytics\Helper\Data                 $dataHelper   Data helper
-     * @param \Magento\Framework\Session\SessionManagerInterface $fwSession    Session manager
+     * @param \Magento\Framework\Model\Context                   $context      Model context
+     * @param \Magento\Framework\Registry                         $registry     Registry
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource   Resource model
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection Resource collection
      * @param array                                                $data         Additional data
      */
-    public function __construct(
-        LayoutInterface $layout,
-        StoreManagerInterface $storeManager,
-        \Convertcart\Analytics\Helper\Data $dataHelper,
-        SessionManagerInterface $fwSession,
-        array $data = []
-    ) {
-        $this->layout = $layout;
-        $this->storeManager = $storeManager;
-        $this->dataHelper = $dataHelper;
-        $this->fwSession = $fwSession;
-        parent::__construct();
+
+    /**
+     * Get LayoutInterface instance (lazy-load).
+     * @return \Magento\Framework\View\LayoutInterface
+     */
+    protected function getLayout()
+    {
+        if ($this->layout === null) {
+            $this->layout = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\View\LayoutInterface::class);
+        }
+        return $this->layout;
+    }
+
+    /**
+     * Get StoreManagerInterface instance (lazy-load).
+     * @return \Magento\Store\Model\StoreManagerInterface
+     */
+    protected function getStoreManager()
+    {
+        if ($this->storeManager === null) {
+            $this->storeManager = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Store\Model\StoreManagerInterface::class);
+        }
+        return $this->storeManager;
+    }
+
+    /**
+     * Get DataHelper instance (lazy-load).
+     * @return \Convertcart\Analytics\Helper\Data
+     */
+    protected function getDataHelper()
+    {
+        if ($this->dataHelper === null) {
+            $this->dataHelper = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Convertcart\Analytics\Helper\Data::class);
+        }
+        return $this->dataHelper;
+    }
+
+    /**
+     * Get SessionManagerInterface instance (lazy-load).
+     * @return \Magento\Framework\Session\SessionManagerInterface
+     */
+    protected function getFwSession()
+    {
+        if ($this->fwSession === null) {
+            $this->fwSession = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\Session\SessionManagerInterface::class);
+        }
+        return $this->fwSession;
     }
 
     /**
@@ -65,11 +104,11 @@ class Cc extends AbstractModel
      */
     public function getInitScript(): ?\Magento\Framework\View\Element\Template
     {
-        if ($this->_dataHelper->isEnabled() == false) {
+        if ($this->getDataHelper()->isEnabled() == false) {
             return null;
         }
 
-        $clientKey = $this->_dataHelper->getClientKey();
+        $clientKey = $this->getDataHelper()->getClientKey();
         if (empty($clientKey)) {
             return null;
         }
@@ -90,19 +129,19 @@ class Cc extends AbstractModel
      */
     public function getEventScript(array $eventData = []): ?\Magento\Framework\View\Element\Template
     {
-        if ($this->_dataHelper->isEnabled() == false) {
+        if ($this->getDataHelper()->isEnabled() == false) {
             return null;
         }
 
-        $clientKey = $this->_dataHelper->getClientKey();
-        $script = $this->_layout->createBlock(\Convertcart\Analytics\Block\Script::class)
+        $clientKey = $this->getDataHelper()->getClientKey();
+        $script = $this->_layout
+            ->createBlock(\Convertcart\Analytics\Block\Script::class)
             ->setTemplate('Convertcart_Analytics::event.phtml')
-            ->assign(
-                [
-                    'eventData' => json_encode($eventData),
-                    'clientKey' => $clientKey
-                ]
-            );
+            ->assign([
+                'eventData' => json_encode($eventData),
+                'clientKey' => $clientKey
+            ]);
+
         return $script;
     }
 
@@ -115,11 +154,11 @@ class Cc extends AbstractModel
      */
     public function storeCcEvents(string $eventName, array $eventData = []): void
     {
-        if ($this->_dataHelper->isEnabled() == false) {
+        if ($this->getDataHelper()->isEnabled() == false) {
             return;
         }
-        $ccEvents = $this->_fwSession->getCcEvents();
-        $eventData['ccEvent'] = $this->_dataHelper->getEventType($eventName);
+        $ccEvents = $this->getFwSession()->getCcEvents();
+        $eventData['ccEvent'] = $this->getDataHelper()->getEventType($eventName);
         $eventLimit = 3;
         if (empty($ccEvents)) {
             $ccEvents = [];
@@ -131,7 +170,7 @@ class Cc extends AbstractModel
             $ccEvents[] = $this->addMetaData($eventData);
         }
 
-        $this->_fwSession->setCcEvents($ccEvents);
+        $this->getFwSession()->setCcEvents($ccEvents);
     }
 
     /**
@@ -141,12 +180,12 @@ class Cc extends AbstractModel
      */
     public function fetchCcEvents(): array
     {
-        if ($this->_dataHelper->isEnabled() == false) {
+        if ($this->getDataHelper()->isEnabled() == false) {
             return null;
         }
 
-        $ccEvents = $this->_fwSession->getCcEvents();
-        $this->_fwSession->setCcEvents();
+        $ccEvents = $this->getFwSession()->getCcEvents();
+        $this->getFwSession()->setCcEvents();
         if (empty($ccEvents)) {
             return [];
         } else {
@@ -163,7 +202,7 @@ class Cc extends AbstractModel
     public function addMetaData(array $eventData = []): array
     {
         $metaData = [];
-        $metaData['plugin_version'] = $this->_dataHelper->getModuleVersion();
+        $metaData['plugin_version'] = $this->getDataHelper()->getModuleVersion();
         $eventData['meta_data'] = $metaData;
         return $eventData;
     }
