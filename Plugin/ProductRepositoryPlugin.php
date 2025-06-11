@@ -16,15 +16,15 @@ class ProductRepositoryPlugin
     /**
      * @var \Magento\Framework\App\ResourceConnection
      */
-    protected ResourceConnection $resourceConnection;
+    protected $resourceConnection;
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    protected LoggerInterface $logger;
+    protected $logger;
     /**
      * @var ProductExtensionFactory
      */
-    protected ProductExtensionFactory $extensionFactory;
+    protected $extensionFactory;
     /**
      * ProductRepositoryPlugin constructor.
      *
