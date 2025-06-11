@@ -70,6 +70,7 @@ class ProductRepositoryPlugin
         if (empty($skus)) {
             return $searchResults;
         }
+
         try {
             $connection = $this->resourceConnection->getConnection();
             $tableName = $connection->getTableName('cataloginventory_stock_item');
@@ -79,12 +80,65 @@ class ProductRepositoryPlugin
                 ->where('product_id IN (?)', array_map(fn($p) => $p->getId(), $products));
             $stockData = $connection->fetchAll($query);
 
+            // check if inventory_source table exists then fetch the inventory source & check if multiple sources are enabled
+            $sourceTable = $connection->getTableName('inventory_source');
+            $sourceItemTable = $connection->getTableName('inventory_source_item');
+            $sourceExists = $connection->isTableExists($sourceTable);
+            $sourceItemTableExists = $connection->isTableExists($sourceItemTable);
+            $msiEnabled = false;
+            $msiStockData = [];
+
+            if ($sourceExists) {
+                $sourceQuery = $connection->select()
+                    ->from($sourceTable, ['source_code'])
+                    ->where('enabled = ?', 1); // Assuming 'enabled' is the column to check if source is enabled
+                $sources = $connection->fetchCol($sourceQuery);
+                if (count($sources) > 1) {
+                    $msiEnabled = true;
+                }
+            }
+
+            if ($msiEnabled && $sourceItemTableExists) {
+                // Fetch stock data from inventory_source table
+                $sourceItemTable = $connection->getTableName('inventory_source_item');
+                $sourceItemQuery = $connection->select()
+                    ->from($sourceItemTable, ['sku', 'quantity', 'status', 'source_code'])
+                    ->where('sku IN (?)', $skus);
+                $msiStockData = $connection->fetchAll($sourceItemQuery);
+            }
+
+            // // If MSI is enabled, create a mapping of SKU to stock data
+            // $msiStockMap = [];
+            if ($msiEnabled && $sourceItemTableExists) {
+                foreach ($msiStockData as $row) {
+                    $sku = $row['sku'];
+                    $sourceCode = $row['source_code'];
+
+                    if (!isset($msiStockMap[$sku])) {
+                        $msiStockMap[$sku] = [];
+                    }
+                    if (!isset($msiStockMap[$sku][$sourceCode])) {
+                        $msiStockMap[$sku][$sourceCode] = [];
+                    }
+                    // Assuming quantity is the stock quantity, status is 1 for in stock, and manage_stock is always true
+                    // Backorders are not considered in MSI, so setting it to 0
+
+                    $msiStockMap[$sku][$sourceCode] = [
+                        'qty' => (float)$row['quantity'],
+                        'is_in_stock' => (int)$row['status'] === 1,
+                        'manage_stock' => true, // Assuming manage stock is always true for MSI
+                        'backorders' => 0 // Assuming no backorders for MSI
+                    ];
+                }
+            }
+
             $stockMap = [];
             foreach ($stockData as $row) {
                 $stockMap[$row['product_id']] = $row;
             }
             foreach ($products as $product) {
                 $productId = $product->getId();
+                $productSku = $product->getSku();
                 if (isset($stockMap[$productId])) {
                     $extensionAttributes = $product->getExtensionAttributes();
                     if ($extensionAttributes === null) {
@@ -95,6 +149,15 @@ class ProductRepositoryPlugin
                     $extensionAttributes->setIsInStock((bool)$stockMap[$productId]['is_in_stock']);
                     $extensionAttributes->setBackorders((int)$stockMap[$productId]['backorders']);
                     $product->setExtensionAttributes($extensionAttributes);
+                }
+
+                if ($msiEnabled && $sourceItemTableExists && isset($msiStockMap[$productSku])) {
+                    $msiExtensionAttributes = $product->getExtensionAttributes();
+                    if ($msiExtensionAttributes === null) {
+                        $msiExtensionAttributes = $this->extensionFactory->create();
+                    }
+                    $msiExtensionAttributes->setMsiStockData(json_encode($msiStockMap[$productSku]));
+                    $product->setExtensionAttributes($msiExtensionAttributes);
                 }
             }
         } catch (\Exception $e) {

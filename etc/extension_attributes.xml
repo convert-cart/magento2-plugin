@@ -4,5 +4,6 @@
         <attribute code="manage_stock" type="boolean"/>
         <attribute code="is_in_stock" type="boolean"/>
         <attribute code="backorders" type="integer"/>
+        <attribute code="msi_stock_data" type="string"/>
     </extension_attributes>
 </config>
