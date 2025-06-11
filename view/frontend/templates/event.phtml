@@ -17,7 +17,7 @@ if ($escaper) {
     <?php if ($escaper): ?>
     ccLayer.push(<?= $escaper->escapeJs($eventData) ?>);
     <?php else: ?>
-    ccLayer.push(<?= json_encode($eventData) ?>);
+    ccLayer.push(<?= $eventData ?>);
     <?php endif; ?>
 </script>
 <!-- ConvertCart Event -->
