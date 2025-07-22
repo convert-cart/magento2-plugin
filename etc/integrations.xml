@@ -3,8 +3,6 @@
              xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Integration:etc/integrations.xsd">
     <integration name="ConvertCart Analytics">
         <email>integration@convertcart.com</email>
-        <endpoint_url>https://app.convertcart.com/api/magento/oauth/callback</endpoint_url>
-        <identity_link_url>https://app.convertcart.com/api/magento/oauth/identity</identity_link_url>
         <resources>
             <!-- Sales (READ-ONLY) -->
             <resource name="Magento_Sales::sales"/>
