@@ -94,9 +94,9 @@ The ConvertCart Analytics plugin now automatically creates the necessary OAuth i
 4. The **Environment** field shows which ConvertCart environment you're connected to
 
 ### Benefits:
-- **No manual permission configuration** - ALL API permissions are granted automatically including Sales operations, complete Catalog access, Customer management, Stores configuration, and Inventory settings
+- **No manual permission configuration** - ALL required API permissions are granted automatically with optimized read-only access to Sales, Catalog, Customer, and Inventory data
 - **Secure OAuth authentication** - tokens are encrypted and managed automatically
-- **Comprehensive data access** - complete access to all required Magento APIs covering every permission previously configured manually
+- **Principle of least privilege** - only grants the 14 permissions actually needed by ConvertCart (down from 43), following security best practices
 - **Environment selection** - choose between production and beta ConvertCart endpoints
 
 ## Troubleshooting
