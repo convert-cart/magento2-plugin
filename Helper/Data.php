@@ -164,33 +164,4 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->getIntegrationTokens() !== null;
     }
 
-    /**
-     * Detect ConvertCart environment based on base URL.
-     *
-     * @return string
-     */
-    public function getConvertCartEnvironment(): string
-    {
-        $baseUrl = $this->scopeConfig->getValue('web/unsecure/base_url');
-        
-        if (strpos($baseUrl, 'localhost') !== false || 
-            strpos($baseUrl, '.local') !== false || 
-            strpos($baseUrl, 'staging') !== false || 
-            strpos($baseUrl, 'dev') !== false) {
-            return 'beta';
-        }
-        
-        return 'production';
-    }
-
-    /**
-     * Get ConvertCart API URL based on environment.
-     *
-     * @return string
-     */
-    public function getConvertCartApiUrl(): string
-    {
-        $environment = $this->getConvertCartEnvironment();
-        return $environment === 'beta' ? 'https://app-beta.convertcart.com' : 'https://app.convertcart.com';
-    }
 }
