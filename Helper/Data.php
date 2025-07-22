@@ -87,6 +87,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Check if Convertcart Analytics is enabled.
+     * Analytics is always enabled - only requires Domain ID and working integration.
      *
      * @return bool
      */
