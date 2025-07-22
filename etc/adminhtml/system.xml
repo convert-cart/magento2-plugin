@@ -31,14 +31,6 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="environment" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Environment</label>
-                    <source_model>Convertcart\Analytics\Model\Config\Source\Environment</source_model>
-                    <comment>Select the ConvertCart environment to connect to.</comment>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
             </group>
         </section>
     </system>

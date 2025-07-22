@@ -85,19 +85,16 @@ The ConvertCart Analytics plugin now automatically creates the necessary OAuth i
 
 ### Manual Configuration Required:
 1. **Domain ID**: Enter your ConvertCart Domain ID in the admin configuration
-2. **Environment**: Select production or beta environment
 
 ### Verify Setup:
 1. Go to **Stores > Configuration > ConvertCart > ConvertCart Configuration**
 2. Enter your **Domain ID** (contact ConvertCart support to get this)
 3. Check the **Integration Status** field to confirm OAuth integration is active
-4. The **Environment** field shows which ConvertCart environment you're connected to
 
 ### Benefits:
 - **No manual permission configuration** - ALL required API permissions are granted automatically with optimized read-only access to Sales, Catalog, Customer, and Inventory data
 - **Secure OAuth authentication** - tokens are encrypted and managed automatically
 - **Principle of least privilege** - only grants the 14 permissions actually needed by ConvertCart (down from 43), following security best practices
-- **Environment selection** - choose between production and beta ConvertCart endpoints
 
 ## Troubleshooting
 
