@@ -70,9 +70,20 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
     bin/magento cache:flush
     ```
 
-## Configure Domain Id
+## Automated Integration Setup
 
-Please reach out to your Customer Support Manager to Configure your domain with Convert Cart.
+The ConvertCart Analytics plugin now automatically creates the necessary OAuth integration during installation. No manual configuration is required!
+
+### What happens automatically:
+- OAuth integration is created with proper permissions
+- API access tokens are generated and stored securely
+- All necessary permissions for catalog, sales, customer, and inventory data are granted
+- Environment detection (production vs beta) is handled automatically
+
+### Verify Integration Status:
+1. Go to **Stores > Configuration > ConvertCart > ConvertCart Configuration**
+2. Check the **Integration Status** field to confirm the integration is active
+3. The **Environment** field shows which ConvertCart environment you're connected to
 
 ## Troubleshooting
 

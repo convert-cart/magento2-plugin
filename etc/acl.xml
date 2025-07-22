@@ -7,6 +7,10 @@
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
                             <resource id="Convertcart_Analytics::config" title="Convertcart Analytics Configuration" />
+                            <resource id="Convertcart_Analytics::api" title="ConvertCart API Access" sortOrder="200">
+                                <resource id="Convertcart_Analytics::sync" title="Sync Data" sortOrder="10"/>
+                                <resource id="Convertcart_Analytics::plugin_info" title="Plugin Information" sortOrder="20"/>
+                            </resource>
                         </resource>
                     </resource>
                 </resource>

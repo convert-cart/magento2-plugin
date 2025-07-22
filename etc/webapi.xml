@@ -12,4 +12,22 @@
 			<resource ref="Magento_Catalog::products"/>
 		</resources>
 	</route>
+	<route url="/V1/cc/customers" method="GET">
+		<service class="Convertcart\Analytics\Api\CustomerRepositoryInterface" method="getCustomers"/>
+		<resources>
+			<resource ref="Magento_Customer::customer"/>
+		</resources>
+	</route>
+	<route url="/V1/cc/orders" method="GET">
+		<service class="Convertcart\Analytics\Api\OrderRepositoryInterface" method="getOrders"/>
+		<resources>
+			<resource ref="Magento_Sales::sales"/>
+		</resources>
+	</route>
+	<route url="/V1/cc/inventory" method="GET">
+		<service class="Convertcart\Analytics\Api\InventoryRepositoryInterface" method="getInventory"/>
+		<resources>
+			<resource ref="Magento_CatalogInventory::cataloginventory"/>
+		</resources>
+	</route>
 </routes>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Convertcart\Analytics\Helper;
 
 use Magento\Framework\Module\ModuleListInterface;
+use Convertcart\Analytics\Model\IntegrationTokenManager;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -23,19 +24,29 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $moduleList;
 
     /**
+     * Integration token manager instance.
+     *
+     * @var IntegrationTokenManager
+     */
+    private $tokenManager;
+
+    /**
      * Constructor for the Helper Data class.
      *
-     * @param \Magento\Framework\App\Helper\Context              $context     Helper context
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig Scope config
-     * @param ModuleListInterface                                $moduleList  Module list
+     * @param \Magento\Framework\App\Helper\Context              $context      Helper context
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig  Scope config
+     * @param ModuleListInterface                                $moduleList   Module list
+     * @param IntegrationTokenManager                            $tokenManager Token manager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        ModuleListInterface $moduleList
+        ModuleListInterface $moduleList,
+        IntegrationTokenManager $tokenManager
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->moduleList = $moduleList;
+        $this->tokenManager = $tokenManager;
         parent::__construct($context);
     }
 
@@ -127,5 +138,59 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $sanitized = strip_tags($param);
         return $sanitized;
+    }
+
+    /**
+     * Get integration tokens for ConvertCart API access.
+     *
+     * @return array|null
+     */
+    public function getIntegrationTokens(): ?array
+    {
+        try {
+            return $this->tokenManager->getStoredTokens() ?? $this->tokenManager->getOrCreateTokens();
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Check if integration is enabled and tokens are available.
+     *
+     * @return bool
+     */
+    public function isIntegrationEnabled(): bool
+    {
+        return $this->getIntegrationTokens() !== null;
+    }
+
+    /**
+     * Detect ConvertCart environment based on base URL.
+     *
+     * @return string
+     */
+    public function getConvertCartEnvironment(): string
+    {
+        $baseUrl = $this->scopeConfig->getValue('web/unsecure/base_url');
+        
+        if (strpos($baseUrl, 'localhost') !== false || 
+            strpos($baseUrl, '.local') !== false || 
+            strpos($baseUrl, 'staging') !== false || 
+            strpos($baseUrl, 'dev') !== false) {
+            return 'beta';
+        }
+        
+        return 'production';
+    }
+
+    /**
+     * Get ConvertCart API URL based on environment.
+     *
+     * @return string
+     */
+    public function getConvertCartApiUrl(): string
+    {
+        $environment = $this->getConvertCartEnvironment();
+        return $environment === 'beta' ? 'https://app-beta.convertcart.com' : 'https://app.convertcart.com';
     }
 }

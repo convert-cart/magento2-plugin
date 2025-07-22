@@ -28,4 +28,17 @@
             type="Convertcart\Analytics\Plugin\ProductRepositoryPlugin"
             sortOrder="10" />
     </type>
+    <type name="Convertcart\Analytics\Helper\Data">
+        <arguments>
+            <argument name="tokenManager" xsi:type="object">Convertcart\Analytics\Model\IntegrationTokenManager</argument>
+        </arguments>
+    </type>
+    <type name="Convertcart\Analytics\Setup\InstallData">
+        <arguments>
+            <argument name="integrationManager" xsi:type="object">Magento\Integration\Model\ConfigBasedIntegrationManager</argument>
+        </arguments>
+    </type>
+    <preference for="Convertcart\Analytics\Api\CustomerRepositoryInterface" type="Convertcart\Analytics\Model\Api\CustomerRepository"/>
+    <preference for="Convertcart\Analytics\Api\OrderRepositoryInterface" type="Convertcart\Analytics\Model\Api\OrderRepository"/>
+    <preference for="Convertcart\Analytics\Api\InventoryRepositoryInterface" type="Convertcart\Analytics\Model\Api\InventoryRepository"/>
 </config>
