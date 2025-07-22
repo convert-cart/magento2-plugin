@@ -70,20 +70,35 @@ Welcome to the Magento 2 Plugin by Convert Cart. This plugin integrates seamless
     bin/magento cache:flush
     ```
 
-## Automated Integration Setup
+## Configure Domain Id
 
-The ConvertCart Analytics plugin now automatically creates the necessary OAuth integration during installation. No manual configuration is required!
+Please reach out to your Customer Support Manager to Configure your domain with Convert Cart.
+
+## Automated Permission Setup
+
+The ConvertCart Analytics plugin now automatically creates the necessary OAuth integration with proper permissions during installation. You still need to configure your Domain ID, but permissions are handled automatically!
 
 ### What happens automatically:
-- OAuth integration is created with proper permissions
+- OAuth integration is created with comprehensive API permissions
 - API access tokens are generated and stored securely
-- All necessary permissions for catalog, sales, customer, and inventory data are granted
+- All necessary permissions for catalog, sales, customer, and inventory data are granted automatically
 - Environment detection (production vs beta) is handled automatically
 
-### Verify Integration Status:
+### Manual Configuration Required:
+1. **Domain ID**: Enter your ConvertCart Domain ID in the admin configuration
+2. **Environment**: Select production or beta environment (auto-detected by default)
+
+### Verify Setup:
 1. Go to **Stores > Configuration > ConvertCart > ConvertCart Configuration**
-2. Check the **Integration Status** field to confirm the integration is active
-3. The **Environment** field shows which ConvertCart environment you're connected to
+2. Enter your **Domain ID** (contact ConvertCart support to get this)
+3. Check the **Integration Status** field to confirm OAuth integration is active
+4. The **Environment** field shows which ConvertCart environment you're connected to
+
+### Benefits:
+- **No manual permission configuration** - all API permissions are granted automatically
+- **Secure OAuth authentication** - tokens are encrypted and managed automatically
+- **Comprehensive data access** - full access to catalog, sales, customer, and inventory APIs
+- **Environment-aware** - automatically detects and connects to the correct ConvertCart endpoint
 
 ## Troubleshooting
 

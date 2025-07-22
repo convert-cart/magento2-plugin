@@ -92,7 +92,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function isEnabled(): bool
     {
-        return (bool)$this->getClientKey();
+        return (bool)$this->getClientKey() && $this->isIntegrationEnabled();
     }
 
     /**
