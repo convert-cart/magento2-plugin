@@ -5,46 +5,32 @@ namespace Convertcart\Analytics\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\App\ResourceConnection;
 use Convertcart\Analytics\Model\SyncFactory;
+use Convertcart\Analytics\Logger\Logger;
 
 class ProcessCategoryAfterDeleteEventObserver implements ObserverInterface
 {
-
-    /**
-     * @var \Convertcart\Analytics\Model\SyncFactory
-     */
-    protected $_deletedCategory;
-
-    /**
-     * @var \Convertcart\Analytics\Logger\Logger
-     */
-    protected $_logger;
+    private SyncFactory $deletedCategory;
+    private Logger $logger;
 
     public function __construct(
-        \Convertcart\Analytics\Model\SyncFactory $deletedCategory,
-        \Convertcart\Analytics\Logger\Logger $_logger
+        SyncFactory $deletedCategory,
+        Logger $logger
     ) {
-        $this->_logger = $_logger;
-        $this->_deletedCategory = $deletedCategory;
+        $this->logger = $logger;
+        $this->deletedCategory = $deletedCategory;
     }
 
-    /**
-     * Execute observer for category after delete event.
-     *
-     * @param  \Magento\Framework\Event\Observer $observer
-     * @return void
-     */
-    public function execute(\Magento\Framework\Event\Observer $observer): void
+    public function execute(Observer $observer): void
     {
         try {
             $eventCategory = $observer->getEvent()->getCategory();
-            $model = $this->_deletedCategory->create();
+            $model = $this->deletedCategory->create();
             $model->addData(["item_id" => $eventCategory->getId()]);
             $model->addData(["type" => "category"]);
-            $saveData = $model->save();
+            $model->save();
         } catch (\Exception $e) {
-            $this->_logger->error($e->getMessage());
+            $this->logger->error($e->getMessage());
         }
     }
 }

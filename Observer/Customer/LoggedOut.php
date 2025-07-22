@@ -3,44 +3,16 @@ declare(strict_types=1);
 
 namespace Convertcart\Analytics\Observer\Customer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Convertcart\Analytics\Observer\AbstractObserver;
 
-class LoggedOut implements ObserverInterface
+class LoggedOut extends AbstractObserver
 {
-    /**
-     * @var \Convertcart\Analytics\Logger\Logger
-     */
-    protected $_logger;
-
-    /**
-     * @var \Convertcart\Analytics\Model\Cc
-     */
-    protected $_ccModel;
-
-    public function __construct(
-        \Convertcart\Analytics\Logger\Logger $_logger,
-        \Convertcart\Analytics\Model\Cc $_ccModel
-    ) {
-        $this->_logger = $_logger;
-        $this->_ccModel = $_ccModel;
-    }
-
-    /**
-     * Execute observer for customer logged out event.
-     *
-     * @param  \Magento\Framework\Event\Observer $observer
-     * @return void
-     */
-    public function execute(\Magento\Framework\Event\Observer $observer): void
+    protected function executeInternal(Observer $observer): void
     {
-        try {
-            $customer = $observer->getCustomer();
-            $eventName = 'loggedOut';
-            $eventData = $this->_ccModel->getCustomerData($customer);
-            $this->_ccModel->storeCcEvents($eventName, $eventData);
-        } catch (\Exception $e) {
-            $this->_logger->error($e->getMessage());
-        }
+        $customer = $observer->getCustomer();
+        $eventName = 'loggedOut';
+        $eventData = $this->ccModel->getCustomerData($customer);
+        $this->ccModel->storeCcEvents($eventName, $eventData);
     }
 }

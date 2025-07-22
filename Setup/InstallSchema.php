@@ -8,6 +8,9 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @deprecated Use declarative schema instead (db_schema.xml)
+ */
 class InstallSchema implements InstallSchemaInterface
 {
     /**

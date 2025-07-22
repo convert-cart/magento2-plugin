@@ -1,96 +1,70 @@
 <?php
 declare(strict_types=1);
+
 namespace Convertcart\Analytics\Observer\Cart;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Registry;
-use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\View\LayoutInterface;
 use Magento\Sales\Model\OrderFactory;
-use \Psr\Log\LoggerInterface;
+use Convertcart\Analytics\Observer\AbstractObserver;
+use Convertcart\Analytics\Logger\Logger;
+use Convertcart\Analytics\Model\Cc;
 
-class OrderCompleted implements ObserverInterface
+class OrderCompleted extends AbstractObserver
 {
-    /**
-     * @var \Convertcart\Analytics\Logger\Logger
-     */
-    protected $_logger;
-    /**
-     * @var \Convertcart\Analytics\Model\Cc
-     */
-    protected $_ccModel;
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $_storeManager;
-    /**
-     * @var \Magento\Sales\Model\OrderFactory
-     */
-    protected $_salesOrderFactory;
-    protected $_dataHelper;
-    public function __construct(
-        StoreManagerInterface $storeManager,
-        OrderFactory $_salesOrderFactory,
-        \Convertcart\Analytics\Logger\Logger $_logger,
-        \Convertcart\Analytics\Model\Cc $_ccModel
-    ) {
-        $this->_storeManager = $storeManager;
-        $this->_salesOrderFactory = $_salesOrderFactory;
-        $this->_ccModel = $_ccModel;
-        $this->_logger = $_logger;
-    }
-    /**
-     * Execute observer for order completed event.
-     *
-     * @param  \Magento\Framework\Event\Observer $observer
-     * @return void
-     */
-    public function execute(\Magento\Framework\Event\Observer $observer): void
-    {
-        try {
-            $orderIds = $observer->getData('order_ids');
-            if (!is_array($orderIds) || empty($orderIds[0])) {
-                return;
-            }
-            $eventData = [];
-            $eventData['items'] = [];
-            $store = $this->_storeManager->getStore();
-            $currency = is_object($store) ? $store->getCurrentCurrencyCode() : null;
-            $order = $this->_salesOrderFactory->create()->load($orderIds[0]);
-            if (!is_object($order)) {
-                return;
-            }
-            foreach ($order->getAllVisibleItems() as $item) {
-                $orderItem = [];
-                $orderItem['name'] = str_replace("'", "", $item->getName());
-                $orderItem['price'] = $item->getPrice();
-                $orderItem['currency'] = $currency;
-                $orderItem['quantity'] = $item->getQtyOrdered();
-                $orderItem['id'] = $item->getProductId();
-                $orderItem['sku'] = $item->getSku();
-                $product = $item->getProduct();
-                if (is_object($product)) {
-                    $orderItem['url'] = $product->getProductUrl();
-                }
-                $eventData['items'][] = $orderItem;
-            }
-            $eventData['orderId'] = $order->getIncrementId();
-            $eventData['order_email'] = $order->getCustomerEmail();
-            $eventData['currency'] = $currency;
-            $eventData['is_guest'] = $order->getCustomerIsGuest();
-            $eventData['coupon_code'] = $order->getCouponCode();
-            $eventData['shipping_method'] = $order->getShippingDescription();
-            $eventData['payment_method'] = $order->getPayment()->getMethod();
-            $eventData['status'] = $order->getStatus();
-            $eventData['currency'] = $currency;
-            $eventData['total'] = $order->getGrandTotal();
+    private StoreManagerInterface $storeManager;
+    private OrderFactory $salesOrderFactory;
 
-            $eventName = 'orderCompleted';
-            $this->_ccModel->storeCcEvents($eventName, $eventData);
-        } catch (\Exception $e) {
-            $this->_logger->log(null, $e->getMessage());
+    public function __construct(
+        Logger $logger,
+        Cc $ccModel,
+        StoreManagerInterface $storeManager,
+        OrderFactory $salesOrderFactory
+    ) {
+        parent::__construct($logger, $ccModel);
+        $this->storeManager = $storeManager;
+        $this->salesOrderFactory = $salesOrderFactory;
+    }
+
+    protected function executeInternal(Observer $observer): void
+    {
+        $orderIds = $observer->getData('order_ids');
+        if (!is_array($orderIds) || empty($orderIds[0])) {
+            return;
         }
+        $eventData = [];
+        $eventData['items'] = [];
+        $store = $this->storeManager->getStore();
+        $currency = is_object($store) ? $store->getCurrentCurrencyCode() : null;
+        $order = $this->salesOrderFactory->create()->load($orderIds[0]);
+        if (!is_object($order)) {
+            return;
+        }
+        foreach ($order->getAllVisibleItems() as $item) {
+            $orderItem = [];
+            $orderItem['name'] = str_replace("'", "", $item->getName());
+            $orderItem['price'] = $item->getPrice();
+            $orderItem['currency'] = $currency;
+            $orderItem['quantity'] = $item->getQtyOrdered();
+            $orderItem['id'] = $item->getProductId();
+            $orderItem['sku'] = $item->getSku();
+            $product = $item->getProduct();
+            if (is_object($product)) {
+                $orderItem['url'] = $product->getProductUrl();
+            }
+            $eventData['items'][] = $orderItem;
+        }
+        $eventData['orderId'] = $order->getIncrementId();
+        $eventData['order_email'] = $order->getCustomerEmail();
+        $eventData['currency'] = $currency;
+        $eventData['is_guest'] = $order->getCustomerIsGuest();
+        $eventData['coupon_code'] = $order->getCouponCode();
+        $eventData['shipping_method'] = $order->getShippingDescription();
+        $eventData['payment_method'] = $order->getPayment()->getMethod();
+        $eventData['status'] = $order->getStatus();
+        $eventData['total'] = $order->getGrandTotal();
+
+        $eventName = 'orderCompleted';
+        $this->ccModel->storeCcEvents($eventName, $eventData);
     }
 }

@@ -3,57 +3,35 @@ declare(strict_types=1);
 
 namespace Convertcart\Analytics\Observer\Catalog;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
+use Convertcart\Analytics\Observer\AbstractObserver;
+use Convertcart\Analytics\Logger\Logger;
+use Convertcart\Analytics\Model\Cc;
 
-class CategoryViewed implements ObserverInterface
+class CategoryViewed extends AbstractObserver
 {
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $_registry;
-
-    /**
-     * @var \Convertcart\Analytics\Logger\Logger
-     */
-    protected $_logger;
-
-    /**
-     * @var \Convertcart\Analytics\Model\Cc
-     */
-    protected $_ccModel;
+    private Registry $registry;
 
     public function __construct(
-        Registry $_registry,
-        \Convertcart\Analytics\Logger\Logger $_logger,
-        \Convertcart\Analytics\Model\Cc $_ccModel
+        Logger $logger,
+        Cc $ccModel,
+        Registry $registry
     ) {
-        $this->_registry = $_registry;
-        $this->_logger = $_logger;
-        $this->_ccModel = $_ccModel;
+        parent::__construct($logger, $ccModel);
+        $this->registry = $registry;
     }
 
-    /**
-     * Execute observer for category viewed event.
-     *
-     * @param  \Magento\Framework\Event\Observer $observer
-     * @return void
-     */
-    public function execute(\Magento\Framework\Event\Observer $observer): void
+    protected function executeInternal(Observer $observer): void
     {
-        try {
-            $eventName = 'categoryViewed';
-            $eventData = [];
-            $category = $this->_registry->registry('current_category');
-            if (is_object($category)) {
-                $eventData['name'] = $category->getName();
-                $eventData['id'] = $category->getId();
-                $eventData['url'] = $category->getUrl();
-            }
-            $this->_ccModel->storeCcEvents($eventName, $eventData);
-        } catch (\Exception $e) {
-            $this->_logger->error($e->getMessage());
+        $eventName = 'categoryViewed';
+        $eventData = [];
+        $category = $this->registry->registry('current_category');
+        if (is_object($category)) {
+            $eventData['name'] = $category->getName();
+            $eventData['id'] = $category->getId();
+            $eventData['url'] = $category->getUrl();
         }
+        $this->ccModel->storeCcEvents($eventName, $eventData);
     }
 }
