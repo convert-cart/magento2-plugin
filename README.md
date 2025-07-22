@@ -91,6 +91,8 @@ The ConvertCart Analytics plugin now automatically creates the necessary OAuth i
 2. Enter your **Domain ID** (contact ConvertCart support to get this)
 3. Check the **Integration Status** field to confirm OAuth integration is active
 
+**Note:** Analytics is always enabled - no need to toggle on/off. Simply configure your Domain ID and you're ready!
+
 ### Benefits:
 - **No manual permission configuration** - ALL required API permissions are granted automatically with optimized read-only access to Sales, Catalog, Customer, and Inventory data
 - **Secure OAuth authentication** - tokens are encrypted and managed automatically
