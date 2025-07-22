@@ -18,7 +18,7 @@
                 <field id="domainid" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Domain Id</label>
                     <comment>Contact ConvertCart to get this key.</comment>
-                    <validate>required-entry</validate>
+                    <validate>required-entry validate-alphanum-with-spaces</validate>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

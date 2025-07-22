@@ -89,22 +89,7 @@ class PluginInfo implements PluginInfoInterface
             $tablesExist[$table] = in_array($tableName, $existingTables);
         }
 
-        $requiredTriggers = [
-            'update_cpe_after_insert_catalog_product_entity_decimal',
-            'update_cpe_after_update_catalog_product_entity_decimal',
-            'update_cpe_after_insert_catalog_inventory_stock_item',
-            'update_cpe_after_update_catalog_inventory_stock_item'
-        ];
-
-        // Raw SQL is required here to detect triggers in the database (Magento API does not provide this)
-        // @codingStandardsIgnoreLine
-        $query = "SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()";
-        $existingTriggers = $this->connection->fetchCol($query);
-
         $triggersExist = [];
-        foreach ($requiredTriggers as $trigger) {
-            $triggersExist[$trigger] = in_array($trigger, $existingTriggers);
-        }
 
         $data = $this->pluginInfoFactory->create();
         $data->setCcPluginVersion($pluginVersion);
@@ -112,8 +97,6 @@ class PluginInfo implements PluginInfoInterface
         $data->setTables($tablesExist);
         $data->setTriggers($triggersExist);
 
-        $this->logger->debug('Existing triggers: ' . json_encode($existingTriggers));
-        $this->logger->debug('Plugin Info Data: ' . json_encode($data));
         return $data;
     }
 }

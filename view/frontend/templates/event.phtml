@@ -1,11 +1,6 @@
 <?php
-$escaper = null;
-if (is_callable([$block, 'getEscaper'])) {
-    $escaper = $block->getEscaper();
-} else {
-    $escaper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
-}
-$jsEventData = json_encode($eventData);
+$escaper = $block->getEscaper();
+$jsEventData = $escaper->escapeJs(json_encode($eventData));
 ?>
 <!-- ConvertCart Event-->
 <script type='text/javascript' data-cfasync="false">

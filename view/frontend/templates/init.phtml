@@ -1,18 +1,7 @@
 <?php
-$escaper = null;
-if (is_callable([$block, 'getEscaper'])) {
-    $escaper = $block->getEscaper();
-} else {
-    $escaper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Escaper::class);
-}
-if ($escaper) {
-    $clientKey = $escaper->escapeHtml($clientKey);
-    $jsClientKey = $escaper->escapeJs($clientKey);
-} else {
-    // Fallback for edge cases: ensure at least basic JS escaping.
-    // phpcs:ignore Magento2.Functions.DiscouragedFunction
-    $jsClientKey = json_encode($clientKey);
-}
+$escaper = $block->getEscaper();
+$clientKey = $escaper->escapeHtml($clientKey);
+$jsClientKey = $escaper->escapeJs($clientKey);
 ?>
 <!-- ConvertCart Initialization Started -->
 <script type="text/javascript">
