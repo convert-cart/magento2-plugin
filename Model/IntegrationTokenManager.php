@@ -5,6 +5,7 @@ namespace Convertcart\Analytics\Model;
 
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\OauthService;
+use Magento\Integration\Api\IntegrationServiceInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
@@ -14,6 +15,7 @@ class IntegrationTokenManager
 {
     private IntegrationFactory $integrationFactory;
     private OauthService $oauthService;
+    private IntegrationServiceInterface $integrationService;
     private WriterInterface $configWriter;
     private ScopeConfigInterface $scopeConfig;
     private EncryptorInterface $encryptor;
@@ -22,6 +24,7 @@ class IntegrationTokenManager
     public function __construct(
         IntegrationFactory $integrationFactory,
         OauthService $oauthService,
+        IntegrationServiceInterface $integrationService,
         WriterInterface $configWriter,
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
@@ -29,6 +32,7 @@ class IntegrationTokenManager
     ) {
         $this->integrationFactory = $integrationFactory;
         $this->oauthService = $oauthService;
+        $this->integrationService = $integrationService;
         $this->configWriter = $configWriter;
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
@@ -41,6 +45,11 @@ class IntegrationTokenManager
         
         if (!$integration->getId()) {
             throw new \Exception('ConvertCart Analytics integration not found');
+        }
+
+        if ($integration->getStatus() != \Magento\Integration\Model\Integration::STATUS_ACTIVE) {
+            $this->integrationService->activate($integration->getId());
+            $integration = $this->integrationFactory->create()->load($integration->getId());
         }
 
         $consumer = $this->oauthService->loadConsumer($integration->getConsumerId());

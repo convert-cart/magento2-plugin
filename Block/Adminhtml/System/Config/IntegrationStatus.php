@@ -27,10 +27,15 @@ class IntegrationStatus extends Field
             if ($tokens) {
                 return '<span style="color: green;">✓ Integration Active</span>';
             } else {
-                return '<span style="color: orange;">⚠ Integration Pending</span>';
+                $credentials = $this->tokenManager->getOrCreateTokens();
+                if ($credentials) {
+                    return '<span style="color: green;">✓ Integration Active (Just Activated)</span>';
+                } else {
+                    return '<span style="color: orange;">⚠ Integration Pending</span>';
+                }
             }
         } catch (\Exception $e) {
-            return '<span style="color: red;">✗ Integration Error: ' . $e->getMessage() . '</span>';
+            return '<span style="color: red;">✗ Integration Error: ' . $this->escapeHtml($e->getMessage()) . '</span>';
         }
     }
 }
