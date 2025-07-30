@@ -20,6 +20,36 @@
                     <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\IntegrationStatus</frontend_model>
                     <comment>Shows the current status of the ConvertCart OAuth integration with automated permissions.</comment>
                 </field>
+                <field id="store_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Store URL</label>
+                    <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\StoreUrl</frontend_model>
+                    <comment>Your Magento store's base URL for ConvertCart integration.</comment>
+                </field>
+                <field id="consumer_key" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Consumer Key</label>
+                    <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\ConsumerKey</frontend_model>
+                    <comment>OAuth Consumer Key for API authentication.</comment>
+                </field>
+                <field id="consumer_secret" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Consumer Secret</label>
+                    <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\ConsumerSecret</frontend_model>
+                    <comment>OAuth Consumer Secret for API authentication.</comment>
+                </field>
+                <field id="access_token" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Access Token</label>
+                    <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\AccessToken</frontend_model>
+                    <comment>OAuth Access Token for API requests.</comment>
+                </field>
+                <field id="access_token_secret" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Access Token Secret</label>
+                    <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\AccessTokenSecret</frontend_model>
+                    <comment>OAuth Access Token Secret for API requests.</comment>
+                </field>
+                <field id="store_id" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Store ID</label>
+                    <frontend_model>Convertcart\Analytics\Block\Adminhtml\System\Config\StoreId</frontend_model>
+                    <comment>Magento Store ID for this configuration scope.</comment>
+                </field>
             </group>
         </section>
     </system>

@@ -8,6 +8,7 @@ use Magento\Integration\Model\OauthService;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 class IntegrationTokenManager
 {
@@ -16,19 +17,22 @@ class IntegrationTokenManager
     private WriterInterface $configWriter;
     private ScopeConfigInterface $scopeConfig;
     private EncryptorInterface $encryptor;
+    private StoreManagerInterface $storeManager;
 
     public function __construct(
         IntegrationFactory $integrationFactory,
         OauthService $oauthService,
         WriterInterface $configWriter,
         ScopeConfigInterface $scopeConfig,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        StoreManagerInterface $storeManager
     ) {
         $this->integrationFactory = $integrationFactory;
         $this->oauthService = $oauthService;
         $this->configWriter = $configWriter;
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
+        $this->storeManager = $storeManager;
     }
 
     public function getOrCreateTokens(): array
@@ -55,11 +59,15 @@ class IntegrationTokenManager
             $this->encryptor->encrypt($accessToken->getSecret())
         );
 
+        $store = $this->storeManager->getStore();
+        
         return [
+            'store_url' => $store->getBaseUrl(),
             'consumer_key' => $consumer->getKey(),
             'consumer_secret' => $consumer->getSecret(),
             'access_token' => $accessToken->getToken(),
-            'access_token_secret' => $accessToken->getSecret()
+            'access_token_secret' => $accessToken->getSecret(),
+            'store_id' => $store->getId()
         ];
     }
 
