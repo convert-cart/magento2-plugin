@@ -25,7 +25,7 @@ class SyncManagement extends AbstractModel implements SyncInterface, \Magento\Fr
         return $this->getData(self::ID);
     }
 
-    public function setId(int $id): SyncInterface
+    public function setId($id): SyncInterface
     {
         return $this->setData(self::ID, $id);
     }
