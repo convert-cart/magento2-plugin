@@ -73,7 +73,7 @@ class ProductRepositoryPlugin
 
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $connection->getTableName('cataloginventory_stock_item');
+            $tableName = $this->resourceConnection->getTableName('cataloginventory_stock_item');
 
             $query = $connection->select()
                 ->from($tableName, ['product_id', 'qty', 'is_in_stock', 'manage_stock', 'backorders'])
