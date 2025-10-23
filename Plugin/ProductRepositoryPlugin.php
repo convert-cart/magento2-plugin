@@ -73,7 +73,8 @@ class ProductRepositoryPlugin
 
         try {
             $connection = $this->resourceConnection->getConnection();
-            $tableName = $connection->getTableName('cataloginventory_stock_item');
+            // Use ResourceConnection to resolve table names (table prefixes, etc.)
+            $tableName = $this->resourceConnection->getTableName('cataloginventory_stock_item');
 
             $query = $connection->select()
                 ->from($tableName, ['product_id', 'qty', 'is_in_stock', 'manage_stock', 'backorders'])
@@ -84,12 +85,13 @@ class ProductRepositoryPlugin
 
             // check if inventory_source table exists then fetch the inventory source
             // and check if multiple sources are enabled
-            $sourceTable = $connection->getTableName('inventory_source');
-            $sourceItemTable = $connection->getTableName('inventory_source_item');
+            $sourceTable = $this->resourceConnection->getTableName('inventory_source');
+            $sourceItemTable = $this->resourceConnection->getTableName('inventory_source_item');
             $sourceExists = $connection->isTableExists($sourceTable);
             $sourceItemTableExists = $connection->isTableExists($sourceItemTable);
             $msiEnabled = false;
             $msiStockData = [];
+            $msiStockMap = [];
 
             if ($sourceExists) {
                 $sourceQuery = $connection->select()
@@ -103,15 +105,13 @@ class ProductRepositoryPlugin
 
             if ($msiEnabled && $sourceItemTableExists) {
                 // Fetch stock data from inventory_source table
-                $sourceItemTable = $connection->getTableName('inventory_source_item');
+                $sourceItemTable = $this->resourceConnection->getTableName('inventory_source_item');
                 $sourceItemQuery = $connection->select()
                     ->from($sourceItemTable, ['sku', 'quantity', 'status', 'source_code'])
                     ->where('sku IN (?)', $skus);
                 $msiStockData = $connection->fetchAll($sourceItemQuery);
             }
 
-            // // If MSI is enabled, create a mapping of SKU to stock data
-            // $msiStockMap = [];
             if ($msiEnabled && $sourceItemTableExists) {
                 foreach ($msiStockData as $row) {
                     $sku = $row['sku'];
