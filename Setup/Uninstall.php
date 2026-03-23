@@ -63,7 +63,10 @@ class Uninstall implements UninstallInterface
                 'update_cpe_after_insert_catalog_product_entity_decimal',
                 'update_cpe_after_update_catalog_product_entity_decimal',
                 'update_cpe_after_insert_catalog_inventory_stock_item',
-                'update_cpe_after_update_catalog_inventory_stock_item'
+                'update_cpe_after_update_catalog_inventory_stock_item',
+                'update_cpe_after_insert_inventory_source_item',
+                'update_cpe_after_update_inventory_source_item',
+                'update_cpe_after_insert_inventory_reservation'
             ];
             foreach ($triggerNames as $triggerName) {
                 $triggerExists = $conn->fetchOne(

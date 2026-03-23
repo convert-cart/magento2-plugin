@@ -54,6 +54,49 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
                 $conn->createTable($table);
             }
         }
+
+        if (version_compare($context->getVersion(), '1.0.15', '<')) {
+            $triggers = [
+                'update_cpe_after_insert_inventory_source_item' => "
+                    CREATE TRIGGER update_cpe_after_insert_inventory_source_item
+                    AFTER INSERT ON " . $setup->getTable('inventory_source_item') . "
+                    FOR EACH ROW
+                        UPDATE " . $setup->getTable('catalog_product_entity') . " AS parent
+                        INNER JOIN " . $setup->getTable('catalog_product_relation') . " AS rel ON rel.parent_id = parent.entity_id
+                        INNER JOIN " . $setup->getTable('catalog_product_entity') . " AS child ON child.entity_id = rel.child_id
+                        SET parent.updated_at = NOW()
+                        WHERE child.sku = NEW.sku;",
+                'update_cpe_after_update_inventory_source_item' => "
+                    CREATE TRIGGER update_cpe_after_update_inventory_source_item
+                    AFTER UPDATE ON " . $setup->getTable('inventory_source_item') . "
+                    FOR EACH ROW
+                        UPDATE " . $setup->getTable('catalog_product_entity') . " AS parent
+                        INNER JOIN " . $setup->getTable('catalog_product_relation') . " AS rel ON rel.parent_id = parent.entity_id
+                        INNER JOIN " . $setup->getTable('catalog_product_entity') . " AS child ON child.entity_id = rel.child_id
+                        SET parent.updated_at = NOW()
+                        WHERE child.sku = NEW.sku;",
+                'update_cpe_after_insert_inventory_reservation' => "
+                    CREATE TRIGGER update_cpe_after_insert_inventory_reservation
+                    AFTER INSERT ON " . $setup->getTable('inventory_reservation') . "
+                    FOR EACH ROW
+                        UPDATE " . $setup->getTable('catalog_product_entity') . " AS parent
+                        INNER JOIN " . $setup->getTable('catalog_product_relation') . " AS rel ON rel.parent_id = parent.entity_id
+                        INNER JOIN " . $setup->getTable('catalog_product_entity') . " AS child ON child.entity_id = rel.child_id
+                        SET parent.updated_at = NOW()
+                        WHERE child.sku = NEW.sku;"
+            ];
+            foreach ($triggers as $triggerName => $triggerSql) {
+                $triggerExists = $conn->fetchOne(
+                    "SELECT TRIGGER_NAME FROM information_schema.TRIGGERS
+                     WHERE TRIGGER_NAME = :trigger_name AND TRIGGER_SCHEMA = DATABASE()",
+                    ['trigger_name' => $triggerName]
+                );
+                if (!$triggerExists) {
+                    $conn->query($triggerSql);
+                }
+            }
+        }
+
         $setup->endSetup();
     }
 }
