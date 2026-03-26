@@ -28,6 +28,15 @@ debug() {
     fi
 }
 
+# Cross-platform in-place sed (macOS BSD sed vs GNU sed)
+sed_inplace() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "$@"
+    else
+        sed -i "$@"
+    fi
+}
+
 # Function to handle errors (POSIX compliant)
 handle_error() {
     printf "${RED}Error occurred: %s${NC}\n" "$1"
@@ -300,13 +309,13 @@ check_file_exists "view/frontend/templates/init.phtml"
 
 # Update version in composer.json
 printf "${YELLOW}Updating composer.json with version %s...${NC}\n" "$MAIN_VERSION"
-if ! sed -i "s/\"version\": \".*\"/\"version\": \"$MAIN_VERSION\"/" composer.json; then
+if ! sed_inplace "s/\"version\": \".*\"/\"version\": \"$MAIN_VERSION\"/" composer.json; then
     handle_error "Failed to update composer.json"
 fi
 
 # Update setup_version in module.xml
 printf "${YELLOW}Updating setup_version in module.xml...${NC}\n"
-if ! sed -i "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.xml; then
+if ! sed_inplace "s/setup_version=\"[^\"]*\"/setup_version=\"$MAIN_VERSION\"/" etc/module.xml; then
     handle_error "Failed to update module.xml"
 fi
 
@@ -320,15 +329,15 @@ fi
 
 # Update to beta version in composer.json
 printf "${YELLOW}Updating composer.json with version %s...${NC}\n" "$BETA_VERSION"
-sed -i "s/\"version\": \"$MAIN_VERSION\"/\"version\": \"$BETA_VERSION\"/" composer.json || handle_error "Failed to update composer.json for beta"
+sed_inplace "s/\"version\": \"$MAIN_VERSION\"/\"version\": \"$BETA_VERSION\"/" composer.json || handle_error "Failed to update composer.json for beta"
 
 # Update setup_version in module.xml for beta version
 printf "${YELLOW}Updating setup_version in module.xml for beta version...${NC}\n"
-sed -i "s/setup_version=\"$MAIN_VERSION\"/setup_version=\"$BETA_VERSION\"/" etc/module.xml || handle_error "Failed to update module.xml for beta"
+sed_inplace "s/setup_version=\"$MAIN_VERSION\"/setup_version=\"$BETA_VERSION\"/" etc/module.xml || handle_error "Failed to update module.xml for beta"
 
 # Modify domain in init.phtml for beta
 printf "${YELLOW}Updating domain in init.phtml for beta...${NC}\n"
-if ! sed -i 's/cdn\.convertcart\.com/cdn-beta.convertcart.com/' view/frontend/templates/init.phtml; then
+if ! sed_inplace 's/cdn\.convertcart\.com/cdn-beta.convertcart.com/' view/frontend/templates/init.phtml; then
     handle_error "Failed to update domain in init.phtml for beta"
 fi
 
