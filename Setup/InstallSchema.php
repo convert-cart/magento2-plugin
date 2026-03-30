@@ -114,29 +114,44 @@ class InstallSchema implements InstallSchemaInterface
                     CREATE TRIGGER update_cpe_after_insert_inventory_source_item
                     AFTER INSERT ON " . $setup->getTable('inventory_source_item') . "
                     FOR EACH ROW
+                    BEGIN
                         UPDATE " . $setup->getTable('catalog_product_entity') . " AS parent
                         INNER JOIN " . $setup->getTable('catalog_product_relation') . " AS rel ON rel.parent_id = parent.entity_id
                         INNER JOIN " . $setup->getTable('catalog_product_entity') . " AS child ON child.entity_id = rel.child_id
                         SET parent.updated_at = NOW()
-                        WHERE child.sku = NEW.sku;",
+                        WHERE child.sku = NEW.sku;
+                        UPDATE " . $setup->getTable('catalog_product_entity') . "
+                        SET updated_at = NOW()
+                        WHERE sku = NEW.sku;
+                    END",
                 'update_cpe_after_update_inventory_source_item' => "
                     CREATE TRIGGER update_cpe_after_update_inventory_source_item
                     AFTER UPDATE ON " . $setup->getTable('inventory_source_item') . "
                     FOR EACH ROW
+                    BEGIN
                         UPDATE " . $setup->getTable('catalog_product_entity') . " AS parent
                         INNER JOIN " . $setup->getTable('catalog_product_relation') . " AS rel ON rel.parent_id = parent.entity_id
                         INNER JOIN " . $setup->getTable('catalog_product_entity') . " AS child ON child.entity_id = rel.child_id
                         SET parent.updated_at = NOW()
-                        WHERE child.sku = NEW.sku;",
+                        WHERE child.sku = NEW.sku;
+                        UPDATE " . $setup->getTable('catalog_product_entity') . "
+                        SET updated_at = NOW()
+                        WHERE sku = NEW.sku;
+                    END",
                 'update_cpe_after_insert_inventory_reservation' => "
                     CREATE TRIGGER update_cpe_after_insert_inventory_reservation
                     AFTER INSERT ON " . $setup->getTable('inventory_reservation') . "
                     FOR EACH ROW
+                    BEGIN
                         UPDATE " . $setup->getTable('catalog_product_entity') . " AS parent
                         INNER JOIN " . $setup->getTable('catalog_product_relation') . " AS rel ON rel.parent_id = parent.entity_id
                         INNER JOIN " . $setup->getTable('catalog_product_entity') . " AS child ON child.entity_id = rel.child_id
                         SET parent.updated_at = NOW()
-                        WHERE child.sku = NEW.sku;"
+                        WHERE child.sku = NEW.sku;
+                        UPDATE " . $setup->getTable('catalog_product_entity') . "
+                        SET updated_at = NOW()
+                        WHERE sku = NEW.sku;
+                    END"
             ];
 
             foreach ($triggers as $triggerName => $triggerSql) {
