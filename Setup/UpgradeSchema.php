@@ -55,7 +55,7 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             }
         }
 
-        if (version_compare($context->getVersion(), '1.0.15', '<')) {
+        if (version_compare($context->getVersion(), '1.0.18', '<')) {
             $triggers = [
                 'update_cpe_after_insert_inventory_source_item' => "
                     CREATE TRIGGER update_cpe_after_insert_inventory_source_item
