@@ -162,7 +162,7 @@ class InstallSchema implements InstallSchemaInterface
                 );
                 if (!$triggerExists) {
                     try {
-                        $conn->query($triggerSql);
+                        $conn->getConnection()->exec($triggerSql);
                     } catch (\Exception $e) {
                         throw $e;
                     }
