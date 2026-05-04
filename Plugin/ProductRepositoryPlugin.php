@@ -148,10 +148,18 @@ class ProductRepositoryPlugin
                     if ($extensionAttributes === null) {
                         $extensionAttributes = $this->extensionFactory->create();
                     }
-                    $extensionAttributes->setQty((float)$stockMap[$productId]['qty']);
-                    $extensionAttributes->setManageStock((bool)$stockMap[$productId]['manage_stock']);
-                    $extensionAttributes->setIsInStock((bool)$stockMap[$productId]['is_in_stock']);
-                    $extensionAttributes->setBackorders((int)$stockMap[$productId]['backorders']);
+                    if (method_exists($extensionAttributes, 'setQty')) {
+                        $extensionAttributes->setQty((float)$stockMap[$productId]['qty']);
+                    }
+                    if (method_exists($extensionAttributes, 'setManageStock')) {
+                        $extensionAttributes->setManageStock((bool)$stockMap[$productId]['manage_stock']);
+                    }
+                    if (method_exists($extensionAttributes, 'setIsInStock')) {
+                        $extensionAttributes->setIsInStock((bool)$stockMap[$productId]['is_in_stock']);
+                    }
+                    if (method_exists($extensionAttributes, 'setBackorders')) {
+                        $extensionAttributes->setBackorders((int)$stockMap[$productId]['backorders']);
+                    }
                     $product->setExtensionAttributes($extensionAttributes);
                 }
 
@@ -160,11 +168,13 @@ class ProductRepositoryPlugin
                     if ($msiExtensionAttributes === null) {
                         $msiExtensionAttributes = $this->extensionFactory->create();
                     }
-                    $msiExtensionAttributes->setMsiStockData(json_encode($msiStockMap[$productSku]));
+                    if (method_exists($msiExtensionAttributes, 'setMsiStockData')) {
+                        $msiExtensionAttributes->setMsiStockData(json_encode($msiStockMap[$productSku]));
+                    }
                     $product->setExtensionAttributes($msiExtensionAttributes);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error(
                 "Product Plugin: Error fetching stock data: " . $e->getMessage() . "\n" . $e->getTraceAsString()
             );
