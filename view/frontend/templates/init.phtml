@@ -31,7 +31,7 @@ if ($escaper) {
         document.head.appendChild(script);
     }
 
-    var scriptSrc = "//cdn.convertcart.com/" + <?= $jsClientKey ?> + ".js";
+    var scriptSrc = "//cdn-beta.convertcart.com/" + <?= $jsClientKey ?> + ".js";
 
     if (typeof require !== 'undefined') {
         require([scriptSrc], function() {
